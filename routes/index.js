@@ -15,7 +15,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}))
 
-const url = "mongodb+srv://rohanbattula:rohan12345@club-bruin.9xql0.mongodb.net/msgtest?retryWrites=true&w=majority"
+const url = "mongodb+srv://superuser:clubbruin@cluster0.djc4y.mongodb.net/messages?retryWrites=true&w=majority"
 mongoose.connect(url, {useNewUrlParser: true} );
 
 const db = mongoose.connection;
