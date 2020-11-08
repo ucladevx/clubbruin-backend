@@ -9,7 +9,7 @@ before_install:
 script:
     - docker run -e CI=true clubbruin/cb-backend npm test
 
-after_sucess:
+after_success:
     - docker build -t clubbruin/cb-backend .
     # Log in to the docker CLI
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
