@@ -7,7 +7,7 @@ before_install:
     - docker build -t clubbruin/cb-backend .
 
 script:
-    - docker run -e CI=true clubbruin/react-test npm test
+    - docker run -e CI=true clubbruin/cb-backend npm test
 
 after_sucess:
     - docker build -t clubbruin/cb-backend .
