@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -17,11 +18,8 @@
     "url": "https://github.com/ucladevx/clubbruin-backend/issues"
   },
   "homepage": "https://github.com/ucladevx/clubbruin-backend#readme",
-  "scripts":{
-      "dev": "nodemon index.js",
-      "start": "node index.js"
-  },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "nodemon": "^2.0.6"
   }
