@@ -32,10 +32,12 @@ io.on("connection", (socket)=>{
     console.log("user connected")
     socket.on("chat message", (msg)=> {
     console.log("message: " + msg);
-    socket.broadcast.emit("received", {message : msg } )
     
     chatMsg = new Chat({messages: msg, name: "Rohan"});
     chatMsg.save();
+
+    socket.broadcast.emit("received", {message : msg, senderId: chatMsg.get("name"), time: chatMsg.get("timestamp") } )
+
 })
 socket.on("disconnect", ()=>{
     console.log("Disconnected")
@@ -46,6 +48,11 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/history', async (req, res) => {
+    const chatList = await Chat.find()
+
+    return res.json({chats: chatList});
+});
 
 http.listen(port, ()=>{
     console.log("connected to port: " + port )
