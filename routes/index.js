@@ -33,10 +33,10 @@ io.on("connection", (socket)=>{
     socket.on("chat message", (msg)=> {
     console.log("message: " + msg);
     
-    chatMsg = new Chat({messages: msg, name: "Rohan"});
+    chatMsg = new Chat({messages: msg.text, name: msg.name});
     chatMsg.save();
 
-    socket.broadcast.emit("received", {message : msg, senderId: chatMsg.get("name"), time: chatMsg.get("timestamp") } )
+    socket.broadcast.emit("received", {text : msg.text, name: chatMsg.get("name"), time: chatMsg.get("timestamp") } )
 
 })
 socket.on("disconnect", ()=>{
