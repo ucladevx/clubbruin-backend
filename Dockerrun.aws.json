@@ -1,0 +1,46 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+        {
+            "name": "nginx",
+            "image": "docker.io/clubbruin/cb-nginx",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "memory": 128,
+            "links": [
+                "api",
+                "cbfrontend"
+            ]
+        },
+        {
+            "name": "api",
+            "image": "docker.io/clubbruin/cb-backend",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 9000,
+                    "containerPort": 9000
+                }
+            ],
+            "environment": [],
+            "memory": 128
+        },
+        {
+            "name": "cbfrontend",
+            "image": "docker.io/clubbruin/cb-frontend",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 3000,
+                    "containerPort": 3000
+                }
+            ],
+            "memory": 128
+        }
+    ]
+}
