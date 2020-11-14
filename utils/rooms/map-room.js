@@ -4,12 +4,17 @@ const Schema = schema.Schema;
 const MapSchema = schema.MapSchema;
 
 class Player extends Schema {
-    x = Math.floor(Math.random() * 400);
-    y = Math.floor(Math.random() * 400);
+    constructor(){
+        super()
+        this.x = Math.floor(Math.random() * 400);
+        this.y = Math.floor(Math.random() * 400);
+        this.username = "name"
+    }
 }
 schema.defineTypes(Player, {
     x: "number",
-    y: "number"
+    y: "number",
+    username:"string"
 });
 
 class State extends Schema {
