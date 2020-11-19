@@ -3,17 +3,56 @@ const router = express.Router();
 const bcrypt = require("bcryptjs")
 const jwt = require('jsonwebtoken');
 const userModel = require('../../models/user')
+const mongoose = require('mongoose')
 
-const signingSecret = 'supersecretstringthatwillbestoredindotenvlater'
+const signingSecret = process.env.JWT_SECRET || 'supersecretstringthatwillbestoredindotenvlater'
 
 router.post("/signin", async (req, res) => {
+
+    const { username, password } = req.body
+
+    let token
+    try {
+        const user = await userModel.findOne({ username: username })
+        if (!user) {
+            res.status(401).json({
+                message: 'Username does not exist.'
+            })
+        }
+
+        let hashedPassword = user.password;
+        let result = await bcrypt.compare(password, hashedPassword);
+        if (result === false) {
+            res.status(401).json({
+                message: 'Invalid credentials.'
+            })
+        }
+
+        let email = user.email
+        token = jwt.sign({ username, email }, signingSecret, { expiresIn: "10 days" })
+
+    } catch (err) {
+        res.status(400).json({
+            message: err.message
+        })
+    }
+
     res.status(200).json({
-        message: 'signin works'
+        message: 'Successfully logged in.',
+        username,
+        token
     })
 })
 router.post("/signup", async (req, res) => {
 
     const { username, email, password } = req.body
+
+    // use client side validation and send non-empty username/email/password to backend
+    if (password.length < 8) {
+        return res.json({
+            message: 'Invalid password. Must have at least 8 characters.'
+        })
+    }
 
     let hash
     try {
@@ -35,6 +74,15 @@ router.post("/signup", async (req, res) => {
     try {
         await user.save()
     } catch (err) {
+        if (err.message.includes('duplicate') && err.message.includes('username')) {
+            return res.json({
+                message: 'Username taken. Create a different username.'
+            })
+        } else if (err.message.includes('duplicate') && err.message.includes('email')) {
+            return res.json({
+                message: 'Email already in use. Use a different one.'
+            })
+        }
         return res.json({
             message: err.message
         })
