@@ -20,13 +20,21 @@ const Chat = require("./models/chat");
 
 io.on("connection", (socket) => {
     console.log("user connected")
+    Chat.find({}, function(err,messages) {
+        if(err) return handleError(err);
+        messages.forEach(function(message) {
+            console.log("history msg:" + message.messages + " name: " + message.name + message._id);
+            socket.emit("received", { text: message.messages, name: message.name, time: message.createdAt} )
+
+        })
+    });
     socket.on("chat message", (msg) => {
-        console.log("message: " + msg);
 
-        chatMsg = new Chat({ messages: msg.text, name: msg.name });
+        chatMsg = new Chat({ messages: msg.text, name: msg.name});
         chatMsg.save();
-
-        socket.broadcast.emit("received", { text: msg.text, name: chatMsg.get("name"), time: chatMsg.get("timestamp") })
+        console.log();
+        console.log(chatMsg.get("messages") + chatMsg.get("name") + chatMsg._id.getTimestamp());   
+        socket.broadcast.emit("received", { text: chatMsg.get("messages"), name: chatMsg.get("name"), time: chatMsg._id.getTimestamp() })
 
     })
     socket.on("disconnect", () => {
@@ -48,6 +56,7 @@ app.get('/health', (req, res) => {
         message: `Listening on Port ${PORT}`
     })
 })
+
 
 const connectToDB = async () => {
     try {
