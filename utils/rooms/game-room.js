@@ -26,15 +26,6 @@ class State extends Schema {
     removePlayer(sessionId) {
         this.players.delete(sessionId);
     }
-
-    movePlayer(sessionId, movement) {
-        if (movement.x) {
-            this.players.get(sessionId).x += movement.x * 10;
-
-        } else if (movement.y) {
-            this.players.get(sessionId).y += movement.y * 10;
-        }
-    }
 }
 schema.defineTypes(State, {
     players: { map: Player }
