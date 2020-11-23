@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
     res.status(200).send({
-        message: `Listening on Port ${PORT}`
+        message: `test 1 -> Listening on Port ${PORT}`
     })
 })
 
