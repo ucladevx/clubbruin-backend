@@ -6,7 +6,7 @@ const { Server, LobbyRoom, RelayRoom } = require('colyseus');
 const { monitor } = require('@colyseus/monitor');
 const { MapRoom } = require('./utils/rooms/map-room');
 const { GameRoom } = require('./utils/rooms/game-room');
-const { ColyseusRoutes } = require('./routes/colyseus/index')
+const ColyseusRoutes = require('./routes/colyseus/index');
 
 const port = Number(process.env.PORT || 2567) + Number(process.env.NODE_APP_INSTANCE || 0);
 const app = express();

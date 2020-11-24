@@ -1,7 +1,7 @@
-const router = require('express').Router()
+const router = require('express').Router();
 
 router.get('/map', (req, res) => {
-    console.log("got map")
+    res.send("got map");
     // res.sendFile(path.join(__dirname + '../utils/mock-frontend/map.html'));
 });
 router.get('/game', (req, res) => {
