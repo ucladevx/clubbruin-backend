@@ -35,7 +35,6 @@ gameServer.onShutdown(function () {
 gameServer.listen(port);
 
 console.log(`Listening on http://localhost:${port}`);
-=======
 const cors = require('cors');
 const mongoose = require('mongoose')
 
