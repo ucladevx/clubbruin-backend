@@ -8,10 +8,9 @@ const { MapRoom } = require('./utils/rooms/map-room');
 const { GameRoom } = require('./utils/rooms/game-room');
 const ColyseusRoutes = require('./routes/colyseus/index');
 
-const port = Number(process.env.PORT || 2567) + Number(process.env.NODE_APP_INSTANCE || 0);
+const port = Number(process.env.PORT || 9000) + Number(process.env.NODE_APP_INSTANCE || 0);
 const app = express();
 
-app.use(cors());
 app.use(express.json());
 
 // Attach WebSocket Server on HTTP Server.
@@ -35,12 +34,9 @@ gameServer.onShutdown(function () {
 gameServer.listen(port);
 
 console.log(`Listening on http://localhost:${port}`);
-const cors = require('cors');
 const mongoose = require('mongoose')
 
-const app = express();
 app.use(express.json());
-app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 const http = require("http").Server(app)
 const socketio = require("socket.io");
@@ -108,9 +104,9 @@ const connectToDB = async () => {
     }
 }
 
-app.listen(PORT, () => {
-    console.log(`Listening on Port ${PORT}`)
-})
+// app.listen(PORT, () => {
+//     console.log(`Listening on Port ${PORT}`)
+// })
 
 http.listen(SOCKET_PORT, () => {
     console.log("connected to port: " + SOCKET_PORT)

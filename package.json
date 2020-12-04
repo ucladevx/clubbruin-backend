@@ -22,7 +22,7 @@
   "dependencies": {
     "@colyseus/monitor": "^0.14.0",
     "colyseus": "^0.14.2",
-    "serve-index": "^1.9.1"
+    "serve-index": "^1.9.1",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",
