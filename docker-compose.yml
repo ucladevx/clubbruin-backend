@@ -1,0 +1,14 @@
+version: "3"
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - /app/node_modules
+      - .:/app
+    stdin_open: true
+    environment: 
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "9000:9000"
