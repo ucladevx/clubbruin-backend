@@ -33,7 +33,7 @@ schema.defineTypes(Fish, {
 
 export class FishingRoom extends Room<GameState> {
     onCreate(options: any) {
-        this.setState(new GameState())
+        this.setState(new State())
     }
 
     onJoin(client: Client, options: any) {
