@@ -35,7 +35,9 @@
 
         var client = new Colyseus.Client(location.protocol.replace("http", "ws") + "//" + host + (location.port ? ':' + location.port : ''));
         var room;
-        client.joinOrCreate("map").then(room_instance => {
+        client.joinOrCreate("map", {
+                username: 'userrrrrrr'
+            }).then(room_instance => {
             room = room_instance
 
             var players = {};
