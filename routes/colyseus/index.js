@@ -9,6 +9,10 @@ router.get('/game', (req, res) => {
     res.sendFile(path.join(__dirname + '/../../utils/mock-frontend/game.html'));
 });
 
+router.get('/auth', (req, res) => {
+    res.sendFile(path.join(__dirname + '/../../utils/mock-frontend/auth.html'));
+});
+
 // router.get('/game/:gameId', (req, res) => {
 //     res.sendFile(path.join(__dirname + '../utils/mock-frontend/' + req.params.gameId + '.html'));
 // });

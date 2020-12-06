@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+
+    <style>
+      body { font-family: Tahoma, Geneva, sans-serif; }
+    </style>
+
+    <!-- colyseus.js client -->
+    <script type="text/javascript" src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
+
+  </head>
+  <body>
+    <strong>Auth Check:</strong><br>
+    <button id="AuthButton" class="float-left submit-button" >Join (Authorized)</button>
+    <button id="Button" class="float-left submit-button" >Join (Unauthorized)</button>
+    <script>
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vY2siLCJlbWFpbCI6Im1vY2siLCJpYXQiOjE2MDcyMDg1NTcsImV4cCI6MTYwODA3MjU1N30.4ZPPba5NCVe-Lnke3laL0YPmzQw3ftSGh_wLxC-OdWk"
+        var host = window.document.location.host.replace(/:.*/, '');
+        var client = new Colyseus.Client(location.protocol.replace("http", "ws") + "//" + host + (location.port ? ':' + location.port : ''));
+        var room;
+
+        document.getElementById("AuthButton").onclick = function () {
+            client.joinOrCreate("auth", {accessToken:token}).then(room_instance => {
+            room = room_instance
+        });
+        };
+        document.getElementById("Button").onclick = function () {
+            client.joinOrCreate("auth").then(room_instance => {
+            room = room_instance
+        });
+        };
+    </script>
+  </body>
+</html>

@@ -1,14 +1,15 @@
 const { Room, Client } =  require("colyseus");
 const schema = require('@colyseus/schema');
+const { AuthRoom } = require("./auth-room");
 const Schema = schema.Schema;
 const MapSchema = schema.MapSchema;
 
 class Player extends Schema {
-    constructor(){
+    constructor(username){
         super()
         this.x = Math.floor(Math.random() * 400);
         this.y = Math.floor(Math.random() * 400);
-        this.username = "name"
+        this.username = username;
     }
 }
 schema.defineTypes(Player, {
@@ -25,8 +26,8 @@ class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
-    createPlayer(sessionId) {
-        this.players.set(sessionId, new Player());
+    createPlayer(sessionId, username) {
+        this.players.set(sessionId, new Player(username));
     }
 
     removePlayer(sessionId) {
@@ -46,7 +47,7 @@ schema.defineTypes(State, {
     players: { map: Player }
 });
 
-class MapRoom extends Room {
+class MapRoom extends AuthRoom {
     maxClients = 10;
 
     onCreate(options) {
@@ -60,13 +61,14 @@ class MapRoom extends Room {
         });
     }
 
-    onAuth(client, options, req) {
-        return true;
-    }
+    // onAuth(client, options, req) {
+    //     return true;
+    // }
 
-    onJoin(client) {
+    onJoin(client, options) {
+
         client.send("hello", "world");
-        this.state.createPlayer(client.sessionId);
+        this.state.createPlayer(client.sessionId, options.username);
     }
 
     onLeave(client) {
