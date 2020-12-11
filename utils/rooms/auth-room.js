@@ -6,6 +6,8 @@ const MapSchema = schema.MapSchema;
 const signingSecret = process.env.JWT_SECRET || 'supersecretstringthatwillbestoredindotenvlater'
 
 class AuthRoom extends Room {
+    user_list = [];
+
     onCreate(options) {
         console.log("AuthRoom created!", options);
     }
@@ -13,6 +15,12 @@ class AuthRoom extends Room {
     onAuth(client, options, req) {
         console.log('authorizing...');
         var token = options.accessToken;
+        var user = options.username;
+        if (this.user_list.includes(user)) {
+            console.log('user already in room!');
+            return false;
+        }
+        this.user_list.push(user);
         return jwt.verify(token, signingSecret, (err) => {
             if(err){
                 console.log('unauthorized join!');
@@ -24,15 +32,15 @@ class AuthRoom extends Room {
     }
 
     onJoin(client, options) {
-        console.log('joined room!')
+        console.log(options.username + ' joined room!');
     }
 
     onLeave(client) {
-        console.log('left room!')
+        console.log('left room!');
     }
 
     onDispose() {
-        console.log("Dispose Room");
+        console.log("Room Disposed");
     }
 }
 
