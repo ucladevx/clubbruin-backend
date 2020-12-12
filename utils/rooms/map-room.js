@@ -4,11 +4,11 @@ const Schema = schema.Schema;
 const MapSchema = schema.MapSchema;
 
 class Player extends Schema {
-    constructor(){
+    constructor(username){
         super()
-        this.x = Math.floor(Math.random() * 400);
-        this.y = Math.floor(Math.random() * 400);
-        this.username = "name"
+        this.x = Math.floor(Math.random() * 1);
+        this.y = Math.floor(Math.random() * 1);
+        this.username = username
     }
 }
 schema.defineTypes(Player, {
@@ -25,8 +25,8 @@ class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
-    createPlayer(sessionId) {
-        this.players.set(sessionId, new Player());
+    createPlayer(sessionId, username) {
+        this.players.set(sessionId, new Player(username));
     }
 
     removePlayer(sessionId) {
@@ -35,10 +35,10 @@ class State extends Schema {
 
     movePlayer(sessionId, movement) {
         if (movement.x) {
-            this.players.get(sessionId).x += movement.x * 10;
+            this.players.get(sessionId).x += movement.x * 0.08;
 
         } else if (movement.y) {
-            this.players.get(sessionId).y += movement.y * 10;
+            this.players.get(sessionId).y += movement.y * 0.08;
         }
     }
 }
@@ -64,9 +64,9 @@ class MapRoom extends Room {
         return true;
     }
 
-    onJoin(client) {
+    onJoin(client, options) {
         client.send("hello", "world");
-        this.state.createPlayer(client.sessionId);
+        this.state.createPlayer(client.sessionId, options.username);
     }
 
     onLeave(client) {
