@@ -10,7 +10,7 @@ const ColyseusRoutes = require('./routes/colyseus/index');
 
 const port = Number(process.env.PORT || 9000) + Number(process.env.NODE_APP_INSTANCE || 0);
 const app = express();
-
+app.use(cors())
 app.use(express.json());
 
 // Attach WebSocket Server on HTTP Server.
@@ -38,7 +38,7 @@ const mongoose = require('mongoose')
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const http = require("http").Server(app)
+const http = require("http").Server(express())
 const socketio = require("socket.io");
 
 // add this to .env
@@ -51,21 +51,21 @@ const Chat = require("./models/chat");
 
 
 io.on("connection", (socket) => {
-    console.log("user connected")
+    console.log("user connected",socket.handshake.headers.referer, socket.id)
     Chat.find({}, function(err,messages) {
         if(err) return handleError(err);
         messages.forEach(function(message) {
-            console.log("history msg:" + message.messages + " name: " + message.name + message._id);
+            // console.log("history msg:" + message.messages + " name: " + message.name + message._id);
             socket.emit("received", { text: message.messages, name: message.name, time: message.createdAt} )
 
         })
     });
-    socket.on("chat message", (msg) => {
+    socket.on("chat message",async (msg) => {
+        // console.log('new msg' + msg);
 
-        chatMsg = new Chat({ messages: msg.text, name: msg.name});
-        chatMsg.save();
-        console.log();
-        console.log(chatMsg.get("messages") + chatMsg.get("name") + chatMsg._id.getTimestamp());   
+        const chatMsg = new Chat({ messages: msg.text, name: msg.name});
+        await chatMsg.save();
+        // console.log(chatMsg.get("messages") + chatMsg.get("name") + chatMsg._id.getTimestamp());   
         socket.broadcast.emit("received", { text: chatMsg.get("messages"), name: chatMsg.get("name"), time: chatMsg._id.getTimestamp() })
 
     })
