@@ -9,7 +9,7 @@ class AuthRoom extends Room {
     user_list = [];
 
     onCreate(options) {
-        console.log("AuthRoom created!", options);
+        console.log("Room created!", options);
     }
 
     onAuth(client, options, req) {

@@ -22,7 +22,7 @@
         var room;
 
         document.getElementById("AuthButton").onclick = function () {
-            client.joinOrCreate("auth", {accessToken:token}).then(room_instance => {
+            client.joinOrCreate("auth", {username:'user420', accessToken:token}).then(room_instance => {
             room = room_instance
         });
         };
