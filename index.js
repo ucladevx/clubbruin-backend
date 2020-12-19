@@ -38,7 +38,9 @@ const mongoose = require('mongoose')
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const http = require("http").Server(express())
+const chatApp = express()
+chatApp.use(cors())
+const http = require("http").Server(chatApp)
 const socketio = require("socket.io");
 
 // add this to .env
