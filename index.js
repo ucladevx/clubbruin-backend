@@ -22,6 +22,7 @@ const gameServer = new Server({
 
 gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
+gameServer.define("fishing",FishingRoom);
 
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());

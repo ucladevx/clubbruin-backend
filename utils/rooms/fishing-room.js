@@ -46,11 +46,13 @@ class Player extends Schema {
         super()
         this.username = "name";
         this.score = 0;
+        this.rod = new Rod();
     }
 }
 schema.defineTypes(Player, {
     username: "string",
-    score: "number"
+    score: "number",
+    rod: Rod
 });
 
 class FishingState extends Schema {
@@ -58,7 +60,7 @@ class FishingState extends Schema {
         super();
         this.players = new MapSchema();
         this.fishes = new ArraySchema();
-        this.rods = new ArraySchema();
+        
     }
 
     createPlayer(sessionId) {
@@ -71,20 +73,21 @@ class FishingState extends Schema {
 
     moveRod(sessionId, data){
         if (data.x) {
-            this.rods.get(sessionId).x += movement.x;
+            this.players.get(sessionId).rod.x += data.x;
 
-        } else if (movement.y) {
-            this.rods.get(sessionId).y += movement.y;
+        } else if (data.y) {
+            this.players.get(sessionId).rod.y += data.y;
         }
 
     }
     // remove fish when rod grabs it, increment players score as well
-    removeFish(sessionId){
-
+    removeFish(sessionId, data){
+        this.fishes.get(data.i).y -= 1000;
+        this.players.get(sessionId).score += 1; 
     }
 
-
 }
+
 schema.defineTypes(FishingState, {
     players: { map: Player }, 
     fishes: [ Fish ]
