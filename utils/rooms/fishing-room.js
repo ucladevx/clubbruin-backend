@@ -4,8 +4,7 @@ const Schema = schema.Schema;
 const ArraySchema = schema.ArraySchema;
 const MapSchema = schema.MapSchema;
 
-const size = window.screen.width;
-var lim = (window.screen.width / window.screen.height) * 15;
+
 
 function generateStartingPosition() {
     var startingPoint = Math.random();
@@ -82,9 +81,18 @@ class FishingState extends Schema {
     }
     // remove fish when rod grabs it, increment players score as well
     removeFish(sessionId, data){
-        this.fishes.get(data.i).y -= 1000;
+        //this.fishes.get(data.i).y -= 1000;
         this.players.get(sessionId).score += 1; 
     }
+
+    fishDisappeared(sessionId){
+
+    }
+
+    gameOver(sessionId){
+
+    }
+
 
 }
 
@@ -92,9 +100,10 @@ schema.defineTypes(FishingState, {
     players: { map: Player }, 
     fishes: [ Fish ]
 });
-export class FishingRoom extends Room<GameState> {
+
+class FishingRoom extends Room {
     // initializes game state and has event listeners
-    onCreate(options: any) {
+    onCreate(options) {
         this.setState(new FishingState())
 
         this.onMessage("moveRod", (client, data) => {
@@ -102,15 +111,15 @@ export class FishingRoom extends Room<GameState> {
         });
     }
     // when a new player joins, intialize rod for them
-    onJoin(client: Client, options: any) {
+    onJoin(client, options) {
         this.state.createPlayer(client.sessionId);
 
     }
     // when a player leaves, remove their rod 
-    onLeave(client: Client, consented: boolean) {
+    onLeave(client) {
         this.state.removePlayer(client.sessionId);
     }
-
+    // on dispose add player score to db 
     onDispose() {
     }
 }
