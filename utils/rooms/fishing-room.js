@@ -73,9 +73,11 @@ class FishingState extends Schema {
     moveRod(sessionId, data){
         if (data.x) {
             this.players.get(sessionId).rod.x += data.x;
+           // console.log(data.x);
 
         } else if (data.y) {
             this.players.get(sessionId).rod.y += data.y;
+            //console.log(data.y)
         }
 
     }
@@ -107,7 +109,7 @@ class FishingRoom extends Room {
         this.setState(new FishingState())
 
         this.onMessage("moveRod", (client, data) => {
-            this.state.movePlayer(client.sessionId, data);
+            this.state.moveRod(client.sessionId, data);
         });
     }
     // when a new player joins, intialize rod for them
@@ -123,3 +125,5 @@ class FishingRoom extends Room {
     onDispose() {
     }
 }
+
+module.exports = {Fish, Rod, Player, FishingState, FishingRoom}
