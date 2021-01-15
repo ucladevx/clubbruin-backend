@@ -5,7 +5,14 @@ const Schema = schema.Schema;
 const MapSchema = schema.MapSchema;
 const signingSecret = process.env.JWT_SECRET || 'supersecretstringthatwillbestoredindotenvlater'
 
-class AuthRoom extends Room {
+class BasePlayer extends Schema {
+    constructor(username){
+        super()
+        this.username = username
+    }
+}
+
+class BaseRoom extends Room {
     user_list = [];
 
     onCreate(options) {
@@ -44,4 +51,4 @@ class AuthRoom extends Room {
     }
 }
 
-module.exports = { AuthRoom }
+module.exports = { BaseRoom, BasePlayer }

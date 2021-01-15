@@ -6,7 +6,7 @@ const { Server, LobbyRoom, RelayRoom } = require('colyseus');
 const { monitor } = require('@colyseus/monitor');
 const { MapRoom } = require('./utils/rooms/map-room');
 const { GameRoom } = require('./utils/rooms/game-room');
-const { AuthRoom } = require('./utils/rooms/auth-room');
+const { BaseRoom } = require('./utils/rooms/base-room');
 const ColyseusRoutes = require('./routes/colyseus/index');
 
 const port = Number(process.env.PORT || 9000) + Number(process.env.NODE_APP_INSTANCE || 0);
@@ -23,7 +23,7 @@ const gameServer = new Server({
 
 gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
-gameServer.define("auth",AuthRoom);
+gameServer.define("auth",BaseRoom);
 
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());

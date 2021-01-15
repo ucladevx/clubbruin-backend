@@ -1,13 +1,11 @@
-const { Room, Client } = require("colyseus");
 const schema = require('@colyseus/schema');
-const { AuthRoom } = require("./auth-room");
+const {BaseRoom } = require("./base-room");
 const Schema = schema.Schema;
 const MapSchema = schema.MapSchema;
 
 class Player extends Schema {
-    constructor() {
-        super()
-        this.username = "name"
+    constructor(username) {
+        super(username)
     }
 }
 schema.defineTypes(Player, {
@@ -32,7 +30,7 @@ schema.defineTypes(State, {
     players: { map: Player }
 });
 
-class GameRoom extends AuthRoom {
+class GameRoom extends BaseRoom {
     maxClients = 10;
 
     onCreate(options) {
@@ -40,13 +38,10 @@ class GameRoom extends AuthRoom {
         this.setState(new State());
     }
 
-    onAuth(client, options, req) {
-        return true;
-    }
-
-    onJoin(client) {
+    onJoin(client, options) {
+        console.log("Joined GameRoom!")
         client.send("hello", "world");
-        this.state.createPlayer(client.sessionId);
+        this.state.createPlayer(client.sessionId, options.username);
     }
 
     onLeave(client) {

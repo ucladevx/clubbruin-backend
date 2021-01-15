@@ -35,7 +35,7 @@
 
         var client = new Colyseus.Client(location.protocol.replace("http", "ws") + "//" + host + (location.port ? ':' + location.port : ''));
         var room;
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vY2siLCJlbWFpbCI6Im1vY2siLCJpYXQiOjE2MDcyMDg1NTcsImV4cCI6MTYwODA3MjU1N30.4ZPPba5NCVe-Lnke3laL0YPmzQw3ftSGh_wLxC-OdWk"
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vY2siLCJlbWFpbCI6Im1vY2siLCJpYXQiOjE2MTAzMDk1ODEsImV4cCI6MTYxMTE3MzU4MX0.qvdgoFbQJxXgl2-qXAKHJ7kATeSHGNdAU-53wdGs1nw"
         const username = "userrrr"
         client.joinOrCreate("map", {accessToken:token, username:username}).then(room_instance => {
             room = room_instance

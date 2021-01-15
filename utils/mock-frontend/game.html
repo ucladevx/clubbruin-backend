@@ -18,7 +18,9 @@
         var host = window.document.location.host.replace(/:.*/, '');
         var client = new Colyseus.Client(location.protocol.replace("http", "ws") + "//" + host + (location.port ? ':' + location.port : ''));
         var room;
-        client.joinOrCreate("game").then(room_instance => {
+        var username = "user420"
+        var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vY2siLCJlbWFpbCI6Im1vY2siLCJpYXQiOjE2MTAzMDk1ODEsImV4cCI6MTYxMTE3MzU4MX0.qvdgoFbQJxXgl2-qXAKHJ7kATeSHGNdAU-53wdGs1nw"
+        client.joinOrCreate("game", {username: user420, accessToken: token}).then(room_instance => {
             room = room_instance
 
         });
