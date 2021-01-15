@@ -42,6 +42,7 @@ var cors = require('cors');
 var createServer = require('http').createServer;
 var _a = require('colyseus'), Server = _a.Server, LobbyRoom = _a.LobbyRoom, RelayRoom = _a.RelayRoom;
 var monitor = require('@colyseus/monitor').monitor;
+var BaseRoom = require('./utils/rooms/base-room').BaseRoom;
 var MapRoom = require('./utils/rooms/map-room').MapRoom;
 var GameRoom = require('./utils/rooms/game-room').GameRoom;
 var ColyseusRoutes = require('./routes/colyseus/index');
