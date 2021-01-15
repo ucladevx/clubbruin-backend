@@ -11,8 +11,8 @@ router.get('/game', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname + '/../../utils/mock-frontend/game.html'));
 });
 
-router.get('/auth-test', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname + '/../../utils/mock-frontend/auth.html'));
+router.get('/base-test', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname + '/../../utils/mock-frontend/base.html'));
 });
 
 // router.get('/game/:gameId', (req, res) => {

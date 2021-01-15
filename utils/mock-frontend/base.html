@@ -22,12 +22,16 @@
         var room;
 
         document.getElementById("AuthButton").onclick = function () {
-            client.joinOrCreate("auth", {username:'user420', accessToken:token}).then(room_instance => {
+            console.log("button clicked!")
+            client.joinOrCreate("base", {username:'user420', accessToken:token}).then(room_instance => {
+            room = room_instance
+        });
+        client.joinOrCreate("map", {username:'user420', accessToken:token}).then(room_instance => {
             room = room_instance
         });
         };
         document.getElementById("Button").onclick = function () {
-            client.joinOrCreate("auth").then(room_instance => {
+            client.joinOrCreate("base").then(room_instance => {
             room = room_instance
         });
         };
