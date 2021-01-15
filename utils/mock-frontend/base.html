@@ -26,9 +26,6 @@
             client.joinOrCreate("base", {username:'user420', accessToken:token}).then(room_instance => {
             room = room_instance
         });
-        client.joinOrCreate("map", {username:'user420', accessToken:token}).then(room_instance => {
-            room = room_instance
-        });
         };
         document.getElementById("Button").onclick = function () {
             client.joinOrCreate("base").then(room_instance => {
