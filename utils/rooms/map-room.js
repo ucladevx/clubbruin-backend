@@ -1,20 +1,19 @@
-const { Room, Client } =  require("colyseus");
+const { Room, Client } = require("colyseus");
 const schema = require('@colyseus/schema');
+const {BaseRoom, BasePlayer} = require('./base-room')
 const Schema = schema.Schema;
 const MapSchema = schema.MapSchema;
 
-class Player extends Schema {
-    constructor(username){
-        super()
-        this.x = Math.floor(Math.random() * 1);
-        this.y = Math.floor(Math.random() * 1);
-        this.username = username
+class Player extends BasePlayer {
+    constructor(username) {
+        super(username)
+        this.x = Math.floor(Math.random() * 400);
+        this.y = Math.floor(Math.random() * 400);
     }
 }
 schema.defineTypes(Player, {
     x: "number",
     y: "number",
-    username:"string"
 });
 
 class State extends Schema {
@@ -35,10 +34,10 @@ class State extends Schema {
 
     movePlayer(sessionId, movement) {
         if (movement.x) {
-            this.players.get(sessionId).x += movement.x * 0.08;
+            this.players.get(sessionId).x += movement.x * 10;
 
         } else if (movement.y) {
-            this.players.get(sessionId).y += movement.y * 0.08;
+            this.players.get(sessionId).y += movement.y * 10;
         }
     }
 }
@@ -46,7 +45,7 @@ schema.defineTypes(State, {
     players: { map: Player }
 });
 
-class MapRoom extends Room {
+class MapRoom extends BaseRoom {
     maxClients = 10;
 
     onCreate(options) {
@@ -58,10 +57,6 @@ class MapRoom extends Room {
             console.log("MapRoom received message from", client.sessionId, ":", data);
             this.state.movePlayer(client.sessionId, data);
         });
-    }
-
-    onAuth(client, options, req) {
-        return true;
     }
 
     onJoin(client, options) {
@@ -78,4 +73,4 @@ class MapRoom extends Room {
     }
 }
 
-module.exports = {Player, State, MapRoom}
+module.exports = { Player, State, MapRoom }

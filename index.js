@@ -61,6 +61,7 @@ var gameServer = new Server({
 });
 gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
+gameServer.define("base", BaseRoom);
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());
 app.use('/', ColyseusRoutes);

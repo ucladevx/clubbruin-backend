@@ -7,7 +7,7 @@ const cors = require('cors');
 const { createServer } = require('http');
 const { Server, LobbyRoom, RelayRoom } = require('colyseus');
 const { monitor } = require('@colyseus/monitor');
-const {BaseRoom} = require('./utils/rooms/base-room')
+const { BaseRoom } = require('./utils/rooms/base-room')
 const { MapRoom } = require('./utils/rooms/map-room');
 const { GameRoom } = require('./utils/rooms/game-room');
 const ColyseusRoutes = require('./routes/colyseus/index');
@@ -37,6 +37,7 @@ const gameServer = new Server({
 
 gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
+gameServer.define("base", BaseRoom);
 
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());

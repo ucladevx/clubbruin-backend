@@ -90,19 +90,19 @@
         });
 
         function up () {
-            room.send("move", { y: -1 });
+            room.send("move", { y: -10 });
         }
 
         function right () {
-            room.send("move", { x: 1 });
+            room.send("move", { x: 10 });
         }
 
         function down () {
-            room.send("move", { y: 1 })
+            room.send("move", { y: 10 })
         }
 
         function left () {
-            room.send("move", { x: -1 })
+            room.send("move", { x: -10 })
         }
     </script>
   </body>
