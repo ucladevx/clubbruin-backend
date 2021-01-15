@@ -1,15 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var path = require('path');
-var router = require('express').Router();
-router.get('/map', function (req, res) {
+import { Request, Response } from "express";
+
+const path = require('path');
+const router = require('express').Router();
+router.get('/map', (req: Request, res: Response) => {
     // res.send("got map");
     res.sendFile(path.join(__dirname + '../../../utils/mock-frontend/map.html'));
 });
-router.get('/game', function (req, res) {
+
+router.get('/game', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname + '/../../utils/mock-frontend/game.html'));
 });
+
 // router.get('/game/:gameId', (req, res) => {
 //     res.sendFile(path.join(__dirname + '../utils/mock-frontend/' + req.params.gameId + '.html'));
 // });
+
 module.exports = router;
