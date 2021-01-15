@@ -29,15 +29,16 @@
 
     <script>
         document.getElementById("Button").onclick = function () {
-            location.href = "http://localhost:2567/game";
+            location.href = "http://localhost:9000/game";
         };
         var host = window.document.location.host.replace(/:.*/, '');
 
         var client = new Colyseus.Client(location.protocol.replace("http", "ws") + "//" + host + (location.port ? ':' + location.port : ''));
         var room;
-        client.joinOrCreate("map").then(room_instance => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vY2siLCJlbWFpbCI6Im1vY2siLCJpYXQiOjE2MTAzMDk1ODEsImV4cCI6MTYxMTE3MzU4MX0.qvdgoFbQJxXgl2-qXAKHJ7kATeSHGNdAU-53wdGs1nw"
+        const username = "userrrr"
+        client.joinOrCreate("map", {accessToken:token, username:username}).then(room_instance => {
             room = room_instance
-
             var players = {};
             var colors = ['red', 'green', 'yellow', 'blue', 'cyan', 'magenta'];
 
@@ -84,6 +85,8 @@
                 }
             });
 
+        }).catch((err) => {
+            console.log('error joining maproom!');
         });
 
         function up () {
