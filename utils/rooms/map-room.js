@@ -7,8 +7,8 @@ const MapSchema = schema.MapSchema;
 class Player extends BasePlayer {
     constructor(username) {
         super(username)
-        this.x = Math.floor(Math.random() * 400);
-        this.y = Math.floor(Math.random() * 400);
+        this.x = Math.floor(Math.random() * 1);
+        this.y = Math.floor(Math.random() * 1);
     }
 }
 schema.defineTypes(Player, {
@@ -34,10 +34,10 @@ class State extends Schema {
 
     movePlayer(sessionId, movement) {
         if (movement.x) {
-            this.players.get(sessionId).x += movement.x * 10;
+            this.players.get(sessionId).x += movement.x * 0.08;
 
         } else if (movement.y) {
-            this.players.get(sessionId).y += movement.y * 10;
+            this.players.get(sessionId).y += movement.y * 0.08;
         }
     }
 }
