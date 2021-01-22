@@ -23,7 +23,7 @@ const gameServer = new Server({
 
 gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
-gameServer.define("fishing", FishingRoom);
+gameServer.define("fishgame", FishingRoom);
 
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());
@@ -51,7 +51,7 @@ const io = socketio(http);
 
 const Chat = require("./models/chat");
 
-
+/*
 io.on("connection", (socket) => {
     console.log("user connected")
     Chat.find({}, function(err,messages) {
@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
         console.log("Disconnected")
     })
 })
-
+*/
 
 const authRoutes = require("./routes/auth/auth")
 

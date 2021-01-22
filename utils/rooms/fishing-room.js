@@ -12,7 +12,7 @@ function generateStartingPosition() {
     if (multiplier >= 0.5) {return startingPoint * 15};
     return startingPoint * (-15)
   }
-
+/*
 class Fish extends Schema {
 
     constructor(){
@@ -26,7 +26,7 @@ schema.defineTypes(Fish, {
     x: "number",
     y: "number",
 });
-
+*/
 class Rod extends Schema {
 
     constructor(){
@@ -41,9 +41,9 @@ schema.defineTypes(Rod, {
 });
 
 class Player extends Schema {
-    constructor() {
+    constructor(username) {
         super()
-        this.username = "name";
+        this.username = username;
         this.score = 0;
         this.rod = new Rod();
     }
@@ -58,12 +58,12 @@ class FishingState extends Schema {
     constructor() {
         super();
         this.players = new MapSchema();
-        this.fishes = new ArraySchema();
+        //this.fishes = new ArraySchema();
         
     }
 
-    createPlayer(sessionId) {
-        this.players.set(sessionId, new Player());
+    createPlayer(sessionId,username) {
+        this.players.set(sessionId, new Player("name"));
     }
 
     removePlayer(sessionId) {
@@ -73,11 +73,11 @@ class FishingState extends Schema {
     moveRod(sessionId, data){
         if (data.x) {
             this.players.get(sessionId).rod.x += data.x;
-           // console.log(data.x);
+            console.log(data.x);
 
         } else if (data.y) {
             this.players.get(sessionId).rod.y += data.y;
-            //console.log(data.y)
+            console.log(data.y)
         }
 
     }
@@ -100,16 +100,20 @@ class FishingState extends Schema {
 
 schema.defineTypes(FishingState, {
     players: { map: Player }, 
-    fishes: [ Fish ]
+   // fishes: [ Fish ]
 });
 
 class FishingRoom extends Room {
     // initializes game state and has event listeners
     onCreate(options) {
         this.setState(new FishingState())
-
+        console.log("fishing room created!!!")
         this.onMessage("moveRod", (client, data) => {
             this.state.moveRod(client.sessionId, data);
+        });
+
+        this.onMessage("removeFish", (client, data) => {
+            this.state.removeFish(client.sessionId, data);
         });
     }
     // when a new player joins, intialize rod for them
@@ -126,4 +130,4 @@ class FishingRoom extends Room {
     }
 }
 
-module.exports = {Fish, Rod, Player, FishingState, FishingRoom}
+module.exports = {  Rod, Player, FishingState, FishingRoom}
