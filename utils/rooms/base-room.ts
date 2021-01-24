@@ -1,7 +1,6 @@
-import { Client } from "colyseus";
-const jwt = require('jsonwebtoken');
-const { Room, Client } = require("colyseus");
-import {Schema, type } from '@colyseus/schema';
+import jwt from 'jsonwebtoken'
+import { Room, Client } from 'colyseus'
+import { Schema, type } from '@colyseus/schema'
 const signingSecret = process.env.JWT_SECRET || 'supersecretstringthatwillbestoredindotenvlater'
 
 class BasePlayer extends Schema {
@@ -16,6 +15,10 @@ class BasePlayer extends Schema {
 class BaseRoom extends Room {
     user_list: string[] = [];
 
+    constructor(){
+        super()
+    }
+
     onCreate(options: any) {
         console.log("Room created!", options);
     }
@@ -29,7 +32,7 @@ class BaseRoom extends Room {
             return false;
         }
         this.user_list.push(user);
-        return jwt.verify(token, signingSecret, (err: Error) => {
+        return jwt.verify(token, signingSecret, (err) => {
             if (err) {
                 console.log('unauthorized join!');
                 return false;
@@ -52,4 +55,4 @@ class BaseRoom extends Room {
     }
 }
 
-module.exports = { BaseRoom, BasePlayer }
+export { BaseRoom, BasePlayer }

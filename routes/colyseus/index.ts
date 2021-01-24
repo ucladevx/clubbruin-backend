@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
+import path = require('path');
+import * as express from 'express';
+const router = express.Router();
 
-const path = require('path');
-const router = require('express').Router();
 router.get('/map', (req: Request, res: Response) => {
     // res.send("got map");
     res.sendFile(path.join(__dirname + '../../../utils/mock-frontend/map.html'));
@@ -19,4 +20,4 @@ router.get('/base-test', (req: Request, res: Response) => {
 //     res.sendFile(path.join(__dirname + '../utils/mock-frontend/' + req.params.gameId + '.html'));
 // });
 
-module.exports = router;
+export {router}

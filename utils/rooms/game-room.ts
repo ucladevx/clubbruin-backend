@@ -1,50 +1,41 @@
-const schema = require('@colyseus/schema');
-const { BaseRoom, BasePlayer } = require("./base-room");
-const Schema = schema.Schema;
-const MapSchema = schema.MapSchema;
+import { Schema, MapSchema, type } from '@colyseus/schema'
+import { BaseRoom, BasePlayer } from './base-room'
+import { Client } from 'colyseus'
 
 class Player extends BasePlayer {
-    constructor(username) {
+    constructor(username: string) {
         super(username)
     }
 }
-schema.defineTypes(Player, {
-    username: "string"
-});
-
 class State extends Schema {
-    constructor() {
-        super();
-        this.players = new MapSchema();
+    
+    @type({ map: Player })
+    players = new MapSchema<Player>();
+
+    createPlayer(sessionId: string, username: string) {
+        this.players.set(sessionId, new Player(username));
     }
 
-    createPlayer(sessionId) {
-        this.players.set(sessionId, new Player());
-    }
-
-    removePlayer(sessionId) {
+    removePlayer(sessionId: string) {
         this.players.delete(sessionId);
     }
 }
-schema.defineTypes(State, {
-    players: { map: Player }
-});
 
 class GameRoom extends BaseRoom {
     maxClients = 10;
 
-    onCreate(options) {
+    onCreate(options: any) {
         console.log("GameRoom created!", options);
         this.setState(new State());
     }
 
-    onJoin(client, options) {
+    onJoin(client: Client, options: any) {
         console.log("Joined GameRoom!")
         client.send("hello", "world");
         this.state.createPlayer(client.sessionId, options.username);
     }
 
-    onLeave(client) {
+    onLeave(client: Client) {
         this.state.removePlayer(client.sessionId);
     }
 
@@ -53,4 +44,4 @@ class GameRoom extends BaseRoom {
     }
 }
 
-module.exports = { Player, State, GameRoom }
+export { Player, State, GameRoom }

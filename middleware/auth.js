@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var jwt = require('jsonwebtoken');
-var signingSecret = process.env.JWT_SECRET || 'supersecretstringthatwillbestoredindotenvlater';
+const jwt = require('jsonwebtoken');
+const signingSecret = process.env.JWT_SECRET || 'supersecretstringthatwillbestoredindotenvlater';
 exports.jwtCheck = function (req, res, next) {
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        var token = req.headers.authorization.split(" ")[1];
+        const token = req.headers.authorization.split(" ")[1];
         try {
-            var decoded = jwt.verify(token, signingSecret);
+            let decoded = jwt.verify(token, signingSecret);
             console.log(decoded);
             return next();
         }

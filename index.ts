@@ -4,13 +4,13 @@ import { Socket } from "socket.io";
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const { createServer } = require('http');
-const { Server, LobbyRoom, RelayRoom } = require('colyseus');
-const { monitor } = require('@colyseus/monitor');
-const { BaseRoom } = require('./utils/rooms/base-room')
-const { MapRoom } = require('./utils/rooms/map-room');
-const { GameRoom } = require('./utils/rooms/game-room');
-const ColyseusRoutes = require('./routes/colyseus/index');
+import { createServer } from 'http';
+import { Server, LobbyRoom, RelayRoom } from 'colyseus';
+import { monitor } from '@colyseus/monitor';
+import { BaseRoom } from './utils/rooms/base-room';
+import { MapRoom } from './utils/rooms/map-room';
+import { GameRoom } from './utils/rooms/game-room';
+import {router as ColyseusRoutes} from './routes/colyseus/index';
 
 
 const port = Number(process.env.PORT || 9000) + Number(process.env.NODE_APP_INSTANCE || 0);
