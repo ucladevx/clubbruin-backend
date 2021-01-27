@@ -41,15 +41,15 @@ schema.defineTypes(Rod, {
 });
 
 class Player extends Schema {
-    constructor(username) {
+    constructor() {
         super()
-        this.username = username;
+        //this.username = username;
         this.score = 0;
         this.rod = new Rod();
     }
 }
 schema.defineTypes(Player, {
-    username: "string",
+    //username: "string",
     score: "number",
     rod: Rod
 });
@@ -63,7 +63,7 @@ class FishingState extends Schema {
     }
 
     createPlayer(sessionId,username) {
-        this.players.set(sessionId, new Player("name"));
+        this.players.set(sessionId, new Player());
     }
 
     removePlayer(sessionId) {
@@ -73,11 +73,11 @@ class FishingState extends Schema {
     moveRod(sessionId, data){
         if (data.x) {
             this.players.get(sessionId).rod.x += data.x;
-            console.log(data.x);
+            console.log("x value: " + this.players.get(sessionId).rod.x);
 
         } else if (data.y) {
             this.players.get(sessionId).rod.y += data.y;
-            console.log(data.y)
+            console.log("y value: " + this.players.get(sessionId).rod.y)
         }
 
     }
