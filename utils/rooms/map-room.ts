@@ -38,10 +38,9 @@ class MapRoom extends BaseRoom {
     maxClients = 10;
 
     onCreate(options: any) {
+        super.onCreate(options)
         console.log("MapRoom created!", options);
-
         this.setState(new State());
-
         this.onMessage("move", (client: Client, data: any) => {
             console.log("MapRoom received message from", client.sessionId, ":", data);
             this.state.movePlayer(client.sessionId, data);
