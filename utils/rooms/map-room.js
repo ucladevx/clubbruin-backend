@@ -53,6 +53,7 @@ class MapRoom extends base_room_1.BaseRoom {
         this.maxClients = 10;
     }
     onCreate(options) {
+        super.onCreate(options);
         console.log("MapRoom created!", options);
         this.setState(new State());
         this.onMessage("move", (client, data) => {
