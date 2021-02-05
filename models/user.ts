@@ -28,6 +28,9 @@ const UserSchema: Schema = new Schema({
     },
     year: {
         type: Number
+    },
+    chatRooms: {
+        type: [String]
     }
 })
 

@@ -14,9 +14,13 @@ const chatSchema: Schema = new Schema(
         name: {
             type: String
         },
-
-    },
-    { timestamps: true }
+        chatRoom: {
+            type: String
+        },
+        timestamp: {
+            type: Date
+        }
+    }
 );
 
 let Chat;

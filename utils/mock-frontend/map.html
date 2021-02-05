@@ -10,6 +10,7 @@
     <!-- colyseus.js client -->
     <script type="text/javascript" src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
 
+
     <style type="text/css">
       .player {
         width: 100px;
@@ -25,19 +26,30 @@
   </head>
   <body>
     <strong>Game:</strong><br>
-    <button id="Button" class="float-left submit-button" >Join</button>
+    <button id="Button" class="float-left submit-button" >Join</button><br>
+    <br>
+    <br>
+    <strong>Chat:</strong><br>
+    <form>
+    <input type="Text" id="chatbox">
+    <p>
+    <input type=Button Value="Send" id="chatbutton">
+    </form>
 
-    <script>
+    <script type="text/javascript">
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vY2siLCJlbWFpbCI6Im1vY2siLCJpYXQiOjE2MTE0NjI5NzksImV4cCI6MTYxMjMyNjk3OX0.C6-JFHQK4-24S2dG_JE9vPgQXPwVoJdBtB8kR7jdlw4"
+        const username = "mock"
+
         document.getElementById("Button").onclick = function () {
-            location.href = "http://localhost:2567/game";
+            location.href = "http://localhost:9000/game";
         };
         var host = window.document.location.host.replace(/:.*/, '');
 
         var client = new Colyseus.Client(location.protocol.replace("http", "ws") + "//" + host + (location.port ? ':' + location.port : ''));
         var room;
-        client.joinOrCreate("map").then(room_instance => {
+        client.joinOrCreate("map", {accessToken:token, username:username}).then(room_instance => {
+            console.log('joined room!')
             room = room_instance
-
             var players = {};
             var colors = ['red', 'green', 'yellow', 'blue', 'cyan', 'magenta'];
 
@@ -69,6 +81,10 @@
                 console.log(message);
             });
 
+            room.onMessage("chat-recv", (message) => {
+                room.send("chat-recv", message)
+            });
+
             window.addEventListener("keydown", function (e) {
                 if (e.which === 38) {
                     up();
@@ -84,23 +100,31 @@
                 }
             });
 
+        }).catch((err) => {
+            console.log(err, 'error joining maproom!');
         });
 
         function up () {
-            room.send("move", { y: -1 });
+            room.send("move", { y: -10 });
         }
 
         function right () {
-            room.send("move", { x: 1 });
+            room.send("move", { x: 10 });
         }
 
         function down () {
-            room.send("move", { y: 1 })
+            room.send("move", { y: 10 })
         }
 
         function left () {
-            room.send("move", { x: -1 })
+            room.send("move", { x: -10 })
         }
+
+        document.getElementById("chatbutton").onclick = function () {
+            var messagestr = document.getElementById("chatbox").value;
+            room.send("chat-send", messagestr)
+        }
+
     </script>
   </body>
 </html>

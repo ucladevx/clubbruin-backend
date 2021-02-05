@@ -1,94 +1,75 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var _a = require("colyseus"), Room = _a.Room, Client = _a.Client;
-var schema = require('@colyseus/schema');
-var Schema = schema.Schema;
-var MapSchema = schema.MapSchema;
-var Player = /** @class */ (function (_super) {
-    __extends(Player, _super);
-    function Player(username) {
-        var _this = _super.call(this) || this;
-        _this.x = Math.floor(Math.random() * 1);
-        _this.y = Math.floor(Math.random() * 1);
-        _this.username = username;
-        return _this;
+exports.MapRoom = exports.State = exports.Player = void 0;
+const schema_1 = require("@colyseus/schema");
+const base_room_1 = require("./base-room");
+class Player extends base_room_1.BasePlayer {
+    constructor(username) {
+        super(username);
+        this.x = Math.floor(Math.random() * 1);
+        this.y = Math.floor(Math.random() * 1);
     }
-    return Player;
-}(Schema));
-schema.defineTypes(Player, {
-    x: "number",
-    y: "number",
-    username: "string"
-});
-var State = /** @class */ (function (_super) {
-    __extends(State, _super);
-    function State() {
-        var _this = _super.call(this) || this;
-        _this.something = "This attribute won't be sent to the client-side";
-        _this.players = new MapSchema();
-        return _this;
+}
+__decorate([
+    schema_1.type("number")
+], Player.prototype, "x", void 0);
+__decorate([
+    schema_1.type("number")
+], Player.prototype, "y", void 0);
+exports.Player = Player;
+class State extends schema_1.Schema {
+    constructor() {
+        super(...arguments);
+        this.players = new schema_1.MapSchema();
     }
-    State.prototype.createPlayer = function (sessionId, username) {
+    createPlayer(sessionId, username) {
         this.players.set(sessionId, new Player(username));
-    };
-    State.prototype.removePlayer = function (sessionId) {
+    }
+    removePlayer(sessionId) {
         this.players.delete(sessionId);
-    };
-    State.prototype.movePlayer = function (sessionId, movement) {
+    }
+    movePlayer(sessionId, movement) {
         if (movement.x) {
             this.players.get(sessionId).x += movement.x * 0.08;
         }
         else if (movement.y) {
             this.players.get(sessionId).y += movement.y * 0.08;
         }
-    };
-    return State;
-}(Schema));
-schema.defineTypes(State, {
-    players: { map: Player }
-});
-var MapRoom = /** @class */ (function (_super) {
-    __extends(MapRoom, _super);
-    function MapRoom() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.maxClients = 10;
-        return _this;
     }
-    MapRoom.prototype.onCreate = function (options) {
-        var _this = this;
+}
+__decorate([
+    schema_1.type({ map: Player })
+], State.prototype, "players", void 0);
+exports.State = State;
+class MapRoom extends base_room_1.BaseRoom {
+    constructor() {
+        super(...arguments);
+        this.maxClients = 10;
+    }
+    onCreate(options) {
+        super.onCreate(options);
         console.log("MapRoom created!", options);
         this.setState(new State());
-        this.onMessage("move", function (client, data) {
+        this.onMessage("move", (client, data) => {
             console.log("MapRoom received message from", client.sessionId, ":", data);
-            _this.state.movePlayer(client.sessionId, data);
+            this.state.movePlayer(client.sessionId, data);
         });
-    };
-    MapRoom.prototype.onAuth = function (client, options, req) {
-        return true;
-    };
-    MapRoom.prototype.onJoin = function (client, options) {
+    }
+    onJoin(client, options) {
         client.send("hello", "world");
         this.state.createPlayer(client.sessionId, options.username);
-    };
-    MapRoom.prototype.onLeave = function (client) {
+    }
+    onLeave(client) {
         this.state.removePlayer(client.sessionId);
-    };
-    MapRoom.prototype.onDispose = function () {
+    }
+    onDispose() {
         console.log("Dispose MapRoom");
-    };
-    return MapRoom;
-}(Room));
-module.exports = { Player: Player, State: State, MapRoom: MapRoom };
+    }
+}
+exports.MapRoom = MapRoom;

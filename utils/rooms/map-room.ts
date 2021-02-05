@@ -1,37 +1,20 @@
-import { Client } from "colyseus";
-import { Request } from "express";
+import { Client } from 'colyseus'
+import { Schema, type, MapSchema } from '@colyseus/schema';
+import { BaseRoom, BasePlayer } from './base-room';
 
-const { Room, Client } = require("colyseus");
-const schema = require('@colyseus/schema');
-const Schema = schema.Schema;
-const MapSchema = schema.MapSchema;
-
-interface Movement {
-    x: number;
-    y: number;
-}
-
-class Player extends Schema {
+class Player extends BasePlayer {
+    @type("number")
+    x = Math.floor(Math.random() * 1);
+    @type("number")
+    y = Math.floor(Math.random() * 1);
     constructor(username: string) {
-        super()
-        this.x = Math.floor(Math.random() * 1);
-        this.y = Math.floor(Math.random() * 1);
-        this.username = username
+        super(username)
     }
 }
-schema.defineTypes(Player, {
-    x: "number",
-    y: "number",
-    username: "string"
-});
 
 class State extends Schema {
-    constructor() {
-        super();
-        this.players = new MapSchema();
-    }
-
-    something = "This attribute won't be sent to the client-side";
+    @type({ map: Player })
+    players = new MapSchema<Player>();
 
     createPlayer(sessionId: string, username: string) {
         this.players.set(sessionId, new Player(username));
@@ -41,7 +24,7 @@ class State extends Schema {
         this.players.delete(sessionId);
     }
 
-    movePlayer(sessionId: string, movement: Movement) {
+    movePlayer(sessionId: string, movement: any) {
         if (movement.x) {
             this.players.get(sessionId).x += movement.x * 0.08;
 
@@ -50,26 +33,18 @@ class State extends Schema {
         }
     }
 }
-schema.defineTypes(State, {
-    players: { map: Player }
-});
 
-class MapRoom extends Room {
+class MapRoom extends BaseRoom {
     maxClients = 10;
 
     onCreate(options: any) {
+        super.onCreate(options)
         console.log("MapRoom created!", options);
-
         this.setState(new State());
-
         this.onMessage("move", (client: Client, data: any) => {
             console.log("MapRoom received message from", client.sessionId, ":", data);
             this.state.movePlayer(client.sessionId, data);
         });
-    }
-
-    onAuth(client: Client, options: any, req: Request) {
-        return true;
     }
 
     onJoin(client: Client, options: any) {
@@ -86,4 +61,4 @@ class MapRoom extends Room {
     }
 }
 
-module.exports = { Player, State, MapRoom }
+export { Player, State, MapRoom }

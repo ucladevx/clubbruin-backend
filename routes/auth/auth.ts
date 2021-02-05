@@ -17,7 +17,7 @@ router.post("/signin", async (req: Request, res: Response) => {
     try {
         const user = await userModel.findOne({ username: username })
         if (!user) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: 'Username does not exist.'
             })
         }
@@ -27,7 +27,7 @@ router.post("/signin", async (req: Request, res: Response) => {
         let hashedPassword = user.password;
         let result = await bcrypt.compare(password, hashedPassword);
         if (result === false) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: 'Invalid credentials.'
             })
         }
@@ -36,7 +36,7 @@ router.post("/signin", async (req: Request, res: Response) => {
         token = jwt.sign({ username, email }, signingSecret, { expiresIn: "10 days" })
 
     } catch (err) {
-        res.status(400).json({
+        return res.status(400).json({
             message: err.message
         })
     }
