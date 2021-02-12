@@ -4,6 +4,12 @@ import { BaseRoom, BasePlayer } from './base-room';
 const chatModel = require('../../models/chat')
 import { Message } from '../chat/index';
 
+
+// https://docs.colyseus.io/server/client/
+class MyMessage extends Schema {
+    messageHist!: Array<Message>;
+}
+
 class ChatRoom extends BaseRoom {
 
     userList: string[] = [];
@@ -14,6 +20,8 @@ class ChatRoom extends BaseRoom {
     async beforeOnCreate(options: any) {
         let chatId = options.chatId;
         this.messageHist = await chatModel.findById({ chatId })
+
+        // listen for load more i.e. onMessage("load-more") https://docs.colyseus.io/server/room/
     }
 
     constructor() {
@@ -23,8 +31,15 @@ class ChatRoom extends BaseRoom {
     async onJoin(client: Client, options: any) {
         console.log(options.username + ' joined chat room!');
 
+        let data = new MyMessage();
+        data.messageHist = this.messageHist;
+        client.send("chat-hist", data);
+
+        // paginate here?
+        // send next page over
+
         // just send the messageHist to the client. type: chat-hist
-        // this.broadcast("chat-recv", message, { except: client });
+        // this.broadcast("chat-hist", this.messageHist);
     }
 
     onLeave(client: Client) {
