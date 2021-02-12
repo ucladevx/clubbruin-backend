@@ -6,6 +6,7 @@ interface UserDoc extends Document {
     password: string;
     major: string;
     year: number;
+    chatRooms: string[];
 }
 
 const UserSchema: Schema = new Schema({
