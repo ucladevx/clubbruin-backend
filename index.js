@@ -77,7 +77,9 @@ io.on("connection", (socket) => {
     });
 });
 const authRoutes = require("./routes/auth/auth");
+const chatRoutes = require("./routes/chat/chat");
 app.use("/auth", authRoutes);
+app.use("/chat", chatRoutes);
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });

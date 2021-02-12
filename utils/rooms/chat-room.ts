@@ -35,7 +35,7 @@ class ChatRoom extends BaseRoom {
         data.messageHist = this.messageHist;
         client.send("chat-hist", data);
 
-        // paginate here?
+        // paginate here? mongo-cursor-pagination.
         // send next page over
 
         // just send the messageHist to the client. type: chat-hist

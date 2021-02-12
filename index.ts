@@ -10,7 +10,7 @@ import { monitor } from '@colyseus/monitor';
 import { BaseRoom } from './utils/rooms/base-room';
 import { MapRoom } from './utils/rooms/map-room';
 import { GameRoom } from './utils/rooms/game-room';
-import {router as ColyseusRoutes} from './routes/colyseus/index';
+import { router as ColyseusRoutes } from './routes/colyseus/index';
 
 
 const port = Number(process.env.PORT || 9000) + Number(process.env.NODE_APP_INSTANCE || 0);
@@ -93,8 +93,10 @@ io.on("connection", (socket: Socket) => {
 })
 
 const authRoutes = require("./routes/auth/auth")
+const chatRoutes = require("./routes/chat/chat")
 
 app.use("/auth", authRoutes)
+app.use("/chat", chatRoutes)
 
 app.get('/', (req: Request, res: Response) => {
     res.sendFile(__dirname + '/index.html');

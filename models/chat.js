@@ -27,6 +27,12 @@ const chatSchema = new mongoose_1.Schema({
     name: {
         type: String
     },
-}, { timestamps: true });
+    chatRoom: {
+        type: String
+    },
+    timestamp: {
+        type: Date
+    }
+});
 let Chat;
 module.exports = Chat = mongoose_1.default.model("Chat", chatSchema);

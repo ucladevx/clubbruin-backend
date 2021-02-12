@@ -14,8 +14,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasePlayer = exports.BaseRoom = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const colyseus_1 = require("colyseus");
 const schema_1 = require("@colyseus/schema");
 const index_1 = require("../chat/index");
@@ -57,8 +61,13 @@ class BaseRoom extends colyseus_1.Room {
         super();
         this.userList = [];
         this.messageHist = [];
+        this.disableChat = false;
+    }
+    // declare b4OnCreate() here -> noop here
+    beforeOnCreate(options) {
     }
     onCreate(options) {
+        this.beforeOnCreate(options);
         console.log("Base generated");
         this.onMessage("chat-send", (client, data) => {
             console.log("Client (", client.sessionId, ") sent message: ", data);
@@ -70,25 +79,25 @@ class BaseRoom extends colyseus_1.Room {
             console.log("Client (", client.sessionId, ") recieved message: ", data.message);
         });
     }
-    //Authorize with JWT
-    // onAuth(client: Client, options: any) {
-    //     console.log('authorizing...');
-    //     var token: string = options.accessToken;
-    //     var user: string = options.username;
-    //     if (this.userList.includes(user)) {
-    //         console.log('user already in room!');
-    //         return false;
-    //     }
-    //     this.userList.push(user);
-    //     return jwt.verify(token, signingSecret, (err) => {
-    //         if (err) {
-    //             console.log('unauthorized join!');
-    //             return false;
-    //         }
-    //         console.log('token authorized!');
-    //         return true;
-    //     });
-    // }
+    // Authorize with JWT
+    onAuth(client, options) {
+        console.log('authorizing...');
+        var token = options.accessToken;
+        var user = options.username;
+        if (this.userList.includes(user)) {
+            console.log('user already in room!');
+            return false;
+        }
+        this.userList.push(user);
+        return jsonwebtoken_1.default.verify(token, signingSecret, (err) => {
+            if (err) {
+                console.log('unauthorized join!');
+                return false;
+            }
+            console.log('token authorized!');
+            return true;
+        });
+    }
     onJoin(client, options) {
         console.log(options.username + ' joined room!');
     }

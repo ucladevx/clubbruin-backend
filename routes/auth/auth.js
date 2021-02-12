@@ -22,7 +22,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const user = yield userModel.findOne({ username: username });
         if (!user) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: 'Username does not exist.'
             });
         }
@@ -30,7 +30,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
         let hashedPassword = user.password;
         let result = yield bcrypt.compare(password, hashedPassword);
         if (result === false) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: 'Invalid credentials.'
             });
         }
@@ -38,7 +38,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
         token = jwt.sign({ username, email }, signingSecret, { expiresIn: "10 days" });
     }
     catch (err) {
-        res.status(400).json({
+        return res.status(400).json({
             message: err.message
         });
     }

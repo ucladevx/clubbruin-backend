@@ -40,6 +40,9 @@ const UserSchema = new mongoose_1.Schema({
     },
     year: {
         type: Number
+    },
+    chatRooms: {
+        type: [String]
     }
 });
 const User = mongoose_1.default.model("User", UserSchema);
