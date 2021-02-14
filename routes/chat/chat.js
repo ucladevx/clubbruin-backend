@@ -17,6 +17,27 @@ const userModel = require('../../models/user');
 const chatRoomModel = require('../../models/chatRoom');
 const mongoose = require('mongoose');
 const { jwtCheck } = require('../../middleware/auth');
+router.get("/getUserChats", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username } = req.body;
+    try {
+        let user = yield userModel.findOne({ username: username });
+        if (!user) {
+            return res.status(400).json({ message: "User not found!" });
+        }
+        let chatIds = user.chatRooms;
+        let chats = [];
+        chatIds.forEach((id) => __awaiter(void 0, void 0, void 0, function* () {
+            let chat = chatRoomModel.findOne({ chatId: id });
+            if (chat) {
+                chats.push({ chatId: id, type: chat.type, chatName: chat.chatName });
+            }
+        }));
+        return res.status(200).json(chats);
+    }
+    catch (err) {
+        return res.status(401).json({ message: err.message });
+    }
+}));
 router.post("/new", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { participants, chatName } = req.body;
     if (participants == null || participants == undefined) {
