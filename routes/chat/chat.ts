@@ -71,4 +71,30 @@ router.post("/new", jwtCheck, async (req: Request, res: Response) => {
 
 })
 
+router.get('/searchUser', jwtCheck, async (req: Request, res: Response) => {
+
+    let { pattern } = req.query
+
+    pattern = String(pattern)
+    let listOfNames: string[] = []
+    try {
+
+        // figure out what type this is
+        const users = await userModel.find({ username: new RegExp(pattern) })
+
+        users.forEach((user: any) => {
+            listOfNames.push(user.username)
+        })
+
+    } catch (err) {
+        return res.status(400).json({
+            message: err.message
+        })
+    }
+
+    return res.status(200).json({
+        listOfNames
+    })
+})
+
 module.exports = router;

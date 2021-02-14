@@ -63,4 +63,24 @@ router.post("/new", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
 }));
+router.get('/searchUser', jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { pattern } = req.query;
+    pattern = String(pattern);
+    let listOfNames = [];
+    try {
+        // figure out what type this is
+        const users = yield userModel.find({ username: new RegExp(pattern) });
+        users.forEach((user) => {
+            listOfNames.push(user.username);
+        });
+    }
+    catch (err) {
+        return res.status(400).json({
+            message: err.message
+        });
+    }
+    return res.status(200).json({
+        listOfNames
+    });
+}));
 module.exports = router;
