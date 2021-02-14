@@ -22,12 +22,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const ChatRoomSchema = new mongoose_1.Schema({
     chatId: {
-        type: String
+        type: Number
     },
     type: {
         type: String
     },
-    ChatName: {
+    chatName: {
         type: String
     },
 });

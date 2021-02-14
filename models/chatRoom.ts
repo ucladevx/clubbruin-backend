@@ -10,12 +10,12 @@ const ChatRoomSchema: Schema = new Schema(
     {
 
         chatId: {
-            type: String
+            type: Number
         },
         type: {
             type: String
         },
-        ChatName: {
+        chatName: {
             type: String
         },
     }

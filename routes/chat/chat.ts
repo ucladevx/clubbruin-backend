@@ -11,6 +11,28 @@ const mongoose = require('mongoose')
 
 const { jwtCheck } = require('../../middleware/auth')
 
+router.get("/getUserChats", async (req: Request, res: Response) => {
+    const {username} = req.body
+    try{
+        let user = await userModel.findOne({username: username})
+        if(!user){
+            return res.status(400).json({message: "User not found!"})
+        }
+        let chatIds : Array<Number> = user.chatRooms
+        let chats: Array<any> = []
+        chatIds.forEach(async (id: Number) => {
+            let chat = chatRoomModel.findOne({chatId: id})
+            if(chat){
+                chats.push({chatId: id, type: chat.type, chatName: chat.chatName})
+            }
+        })
+        return res.status(200).json(chats)
+    }
+    catch(err){
+        return res.status(401).json({message: err.message})
+    }
+})
+
 router.post("/new", jwtCheck, async (req: Request, res: Response) => {
 
     const { participants, chatName } = req.body;
