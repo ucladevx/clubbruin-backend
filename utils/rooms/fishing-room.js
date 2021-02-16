@@ -20,21 +20,19 @@ function generateStartingPosition() {
     ;
     return startingPoint * (-15);
 }
-/*
-class Fish extends Schema {
-
-    constructor(){
-        super()
-
+class Fish extends schema_1.Schema {
+    constructor() {
+        super();
         this.x = Math.floor(Math.random() * 400);
         this.y = generateStartingPosition();
     }
 }
-schema.defineTypes(Fish, {
-    x: "number",
-    y: "number",
-});
-*/
+__decorate([
+    schema_1.type("number")
+], Fish.prototype, "x", void 0);
+__decorate([
+    schema_1.type("number")
+], Fish.prototype, "y", void 0);
 class Rod extends schema_1.Schema {
     constructor() {
         super(...arguments);
@@ -66,6 +64,7 @@ exports.Player = Player;
 class FishingState extends schema_1.Schema {
     constructor() {
         super(...arguments);
+        this.fishes = new schema_1.MapSchema();
         this.players = new schema_1.MapSchema();
     }
     createPlayer(sessionId, username) {
@@ -85,15 +84,18 @@ class FishingState extends schema_1.Schema {
         }
     }
     // remove fish when rod grabs it, increment players score as well
-    removeFish(sessionId, data) {
+    removeFish(fishId, data) {
         //this.fishes.get(data.i).y -= 1000;
-        this.players.get(sessionId).score += 1;
+        this.fishes.get(fishId).y -= 1000;
     }
     fishDisappeared(sessionId) {
     }
     gameOver(sessionId) {
     }
 }
+__decorate([
+    schema_1.type({ map: Fish })
+], FishingState.prototype, "fishes", void 0);
 __decorate([
     schema_1.type({ map: Player })
 ], FishingState.prototype, "players", void 0);
@@ -110,11 +112,9 @@ class FishingRoom extends base_room_1.BaseRoom {
             this.state.removeFish(client.sessionId, data);
         });
     }
-    /*
-    onAuth(client: Client, options:any){
+    onAuth(client, options) {
         return true;
     }
-    */
     // when a new player joins, intialize rod for them
     onJoin(client, options) {
         this.state.createPlayer(client.sessionId);

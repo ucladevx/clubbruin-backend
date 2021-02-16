@@ -97,7 +97,7 @@ class BaseRoom extends colyseus_1.Room {
             }
             console.log('token authorized!');
         });
-        console.log(isVerified);
+        //console.log(isVerified)
         return isVerified;
     }
     onJoin(client, options) {
