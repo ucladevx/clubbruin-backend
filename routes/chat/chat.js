@@ -16,6 +16,7 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../../models/user');
 const chatRoomModel = require('../../models/chatRoom');
 const mongoose = require('mongoose');
+const MongoPaging = require("mongo-cursor-pagination");
 const { jwtCheck } = require('../../middleware/auth');
 router.get("/getUserChats", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = req.body;
@@ -85,14 +86,29 @@ router.post("/new", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 }));
 router.get('/searchUser', jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { pattern } = req.query;
+    let { pattern, limit, nextPage, previousPage } = req.query;
     pattern = String(pattern);
+    limit = String(limit);
     let listOfNames = [];
     try {
-        // figure out what type this is
-        const users = yield userModel.find({ username: new RegExp(pattern) });
-        users.forEach((user) => {
-            listOfNames.push(user.username);
+        const users = yield MongoPaging.find(userModel.collection, {
+            query: {
+                username: new RegExp(pattern)
+            },
+            limit: parseInt(limit),
+            sortAscending: false,
+            next: nextPage,
+            previous: previousPage
+        });
+        for (let i = 0; i < users.results.length; i++) {
+            listOfNames.push(users.results[i].username);
+        }
+        return res.status(200).json({
+            listOfNames,
+            previous: users.previous,
+            hasPrevious: users.hasPrevious,
+            next: users.next,
+            hasNext: users.hasNext
         });
     }
     catch (err) {
@@ -100,8 +116,5 @@ router.get('/searchUser', jwtCheck, (req, res) => __awaiter(void 0, void 0, void
             message: err.message
         });
     }
-    return res.status(200).json({
-        listOfNames
-    });
 }));
 module.exports = router;

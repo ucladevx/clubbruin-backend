@@ -69,6 +69,8 @@ class BaseRoom extends colyseus_1.Room {
     onCreate(options) {
         this.beforeOnCreate(options);
         console.log("Base generated");
+        // client -> server : chat-send
+        // when client sends chat, we send it back after storing it
         this.onMessage("chat-send", (client, data) => {
             console.log("Client (", client.sessionId, ") sent message: ", data);
             var message = new index_1.Message(options.username, data, Date.now());

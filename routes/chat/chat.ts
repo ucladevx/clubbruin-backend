@@ -8,28 +8,29 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../../models/user')
 const chatRoomModel = require('../../models/chatRoom')
 const mongoose = require('mongoose')
+const MongoPaging = require("mongo-cursor-pagination")
 
 const { jwtCheck } = require('../../middleware/auth')
 
 router.get("/getUserChats", async (req: Request, res: Response) => {
-    const {username} = req.body
-    try{
-        let user = await userModel.findOne({username: username})
-        if(!user){
-            return res.status(400).json({message: "User not found!"})
+    const { username } = req.body
+    try {
+        let user = await userModel.findOne({ username: username })
+        if (!user) {
+            return res.status(400).json({ message: "User not found!" })
         }
-        let chatIds : Array<Number> = user.chatRooms
+        let chatIds: Array<Number> = user.chatRooms
         let chats: Array<any> = []
         chatIds.forEach(async (id: Number) => {
-            let chat = chatRoomModel.findOne({chatId: id})
-            if(chat){
-                chats.push({chatId: id, type: chat.type, chatName: chat.chatName})
+            let chat = chatRoomModel.findOne({ chatId: id })
+            if (chat) {
+                chats.push({ chatId: id, type: chat.type, chatName: chat.chatName })
             }
         })
         return res.status(200).json(chats)
     }
-    catch(err){
-        return res.status(401).json({message: err.message})
+    catch (err) {
+        return res.status(401).json({ message: err.message })
     }
 })
 
@@ -95,17 +96,33 @@ router.post("/new", jwtCheck, async (req: Request, res: Response) => {
 
 router.get('/searchUser', jwtCheck, async (req: Request, res: Response) => {
 
-    let { pattern } = req.query
+    let { pattern, limit, nextPage, previousPage } = req.query
 
     pattern = String(pattern)
+    limit = String(limit)
     let listOfNames: string[] = []
     try {
 
-        // figure out what type this is
-        const users = await userModel.find({ username: new RegExp(pattern) })
+        const users = await MongoPaging.find(userModel.collection, {
+            query: {
+                username: new RegExp(pattern)
+            },
+            limit: parseInt(limit), //number of pages we want
+            sortAscending: false,
+            next: nextPage, //the next string that is produced after running getPostsPage once
+            previous: previousPage
+        })
 
-        users.forEach((user: any) => {
-            listOfNames.push(user.username)
+        for (let i = 0; i < users.results.length; i++) {
+            listOfNames.push(users.results[i].username)
+        }
+
+        return res.status(200).json({
+            listOfNames,
+            previous: users.previous,
+            hasPrevious: users.hasPrevious,
+            next: users.next,
+            hasNext: users.hasNext
         })
 
     } catch (err) {
@@ -114,9 +131,6 @@ router.get('/searchUser', jwtCheck, async (req: Request, res: Response) => {
         })
     }
 
-    return res.status(200).json({
-        listOfNames
-    })
 })
 
 module.exports = router;

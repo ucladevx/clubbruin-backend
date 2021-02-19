@@ -51,6 +51,8 @@ class BaseRoom extends Room {
         this.beforeOnCreate(options)
 
         console.log("Base generated");
+        // client -> server : chat-send
+        // when client sends chat, we send it back after storing it
         this.onMessage("chat-send", (client: Client, data: any) => {
             console.log("Client (", client.sessionId, ") sent message: ", data);
             var message = new Message(options.username, data, Date.now())
