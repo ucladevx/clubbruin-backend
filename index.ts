@@ -10,6 +10,7 @@ import { monitor } from '@colyseus/monitor';
 import { BaseRoom } from './utils/rooms/base-room';
 import { MapRoom } from './utils/rooms/map-room';
 import { GameRoom } from './utils/rooms/game-room';
+import { ChatRoom } from './utils/rooms/chat-room';
 import { router as ColyseusRoutes } from './routes/colyseus/index';
 
 
@@ -38,6 +39,7 @@ const gameServer = new Server({
 gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
 gameServer.define("base", BaseRoom);
+gameServer.define("chat", ChatRoom)
 
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());
