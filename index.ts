@@ -39,7 +39,7 @@ const gameServer = new Server({
 gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
 gameServer.define("base", BaseRoom);
-gameServer.define("chat", ChatRoom)
+gameServer.define("chat", ChatRoom);
 
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());

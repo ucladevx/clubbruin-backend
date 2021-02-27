@@ -18,6 +18,7 @@ const monitor_1 = require("@colyseus/monitor");
 const base_room_1 = require("./utils/rooms/base-room");
 const map_room_1 = require("./utils/rooms/map-room");
 const game_room_1 = require("./utils/rooms/game-room");
+const chat_room_1 = require("./utils/rooms/chat-room");
 const index_1 = require("./routes/colyseus/index");
 const port = Number(process.env.PORT || 9000) + Number(process.env.NODE_APP_INSTANCE || 0);
 const app = express();
@@ -35,6 +36,7 @@ const gameServer = new colyseus_1.Server({
 gameServer.define("map", map_room_1.MapRoom);
 gameServer.define("game", game_room_1.GameRoom);
 gameServer.define("base", base_room_1.BaseRoom);
+gameServer.define("chat", chat_room_1.ChatRoom);
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor_1.monitor());
 app.use('/', index_1.router);

@@ -22,6 +22,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const user = yield userModel.findOne({ username: username });
         if (!user) {
+            console.log(user);
             return res.status(401).json({
                 message: 'Username does not exist.'
             });
