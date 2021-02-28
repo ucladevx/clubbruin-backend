@@ -11,6 +11,8 @@ import { BaseRoom } from './utils/rooms/base-room';
 import { MapRoom } from './utils/rooms/map-room';
 import { GameRoom } from './utils/rooms/game-room';
 import { ChatRoom } from './utils/rooms/chat-room';
+import { JitsiRoom } from './utils/rooms/jitsi-room';
+
 import { router as ColyseusRoutes } from './routes/colyseus/index';
 
 
@@ -40,6 +42,8 @@ gameServer.define("map", MapRoom);
 gameServer.define("game", GameRoom);
 gameServer.define("base", BaseRoom);
 gameServer.define("chat", ChatRoom)
+gameServer.define("jitsi", JitsiRoom)
+
 
 // (optional) attach web monitoring panel
 app.use('/colyseus', monitor());
