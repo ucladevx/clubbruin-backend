@@ -18,28 +18,44 @@ const chatRoomModel = require('../../models/chatRoom');
 const mongoose = require('mongoose');
 const MongoPaging = require("mongo-cursor-pagination");
 const { jwtCheck } = require('../../middleware/auth');
-router.get("/getUserChats", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/getUserChats", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = req.body;
     try {
         let user = yield userModel.findOne({ username: username });
+        console.log(user);
         if (!user) {
             return res.status(400).json({ message: "User not found!" });
         }
         let chatIds = user.chatRooms;
         let chats = [];
+        let promises = [];
         chatIds.forEach((id) => __awaiter(void 0, void 0, void 0, function* () {
-            let chat = chatRoomModel.findOne({ chatId: id });
-            if (chat) {
-                chats.push({ chatId: id, type: chat.type, chatName: chat.chatName });
-            }
+            console.log(id);
+            const promise = new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+                const chat = (yield chatRoomModel.findOne({ _id: new mongoose.Types.ObjectId(id) }));
+                if (chat) {
+                    resolve(chatRoomModel.findOne({ _id: new mongoose.Types.ObjectId(id) }));
+                }
+                else {
+                    reject('User Not found');
+                }
+            }));
+            promises.push(promise);
+            // // let chat = await chatRoomModel.findOne({ _id: new mongoose.Types.ObjectId(id) })
+            // // console.log(chat, typeof chat, chat?.type, chat?.chatName)
+            // // const chat = promise.then(ch => ch)
+            // if (chat) {
+            //     console.log("if chat")
+            //     chats.push({ chatId: id, type: 'chat.type', chatName: 'chat.chatName' })
+            // }
         }));
-        return res.status(200).json(chats);
+        return res.status(200).json(yield Promise.all(promises));
     }
     catch (err) {
         return res.status(401).json({ message: err.message });
     }
 }));
-router.post("/new", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/new", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { participants, chatName } = req.body;
     if (participants == null || participants == undefined) {
         return res.status(400).json({
@@ -55,22 +71,22 @@ router.post("/new", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, fu
     const chatRoomId = Math.ceil(Math.random() * 1000000000000);
     console.log("Chat Room ID: ", chatRoomId);
     try {
+        // push metadata into chat room collection. chat id, chat type, chat name
+        const chatRoomMetadata = new chatRoomModel({
+            chatId: chatRoomId,
+            type: chatType,
+            chatName: chatName
+        });
+        const { _id } = yield chatRoomMetadata.save();
         yield userModel.updateMany({
             username: {
                 $in: participants
             }
         }, {
             $push: {
-                chatRooms: chatRoomId
+                chatRooms: _id
             }
         });
-        // push metadata into chat room collection. chat id, chat type, chat name
-        const chatRoomMetadata = new chatRoomModel({
-            chatId: chatRoomId,
-            type: chatType,
-            ChatName: chatName
-        });
-        yield chatRoomMetadata.save();
         return res.status(200).json({
             message: "Chat Room created successfully, and metadata saved.",
             chatId: chatRoomId,

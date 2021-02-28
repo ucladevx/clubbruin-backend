@@ -17,6 +17,7 @@ router.post("/signin", async (req: Request, res: Response) => {
     try {
         const user = await userModel.findOne({ username: username })
         if (!user) {
+            console.log(user)
             return res.status(401).json({
                 message: 'Username does not exist.'
             })

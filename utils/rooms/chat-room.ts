@@ -52,7 +52,7 @@ class ChatRoom extends BaseRoom {
             chatModel.insertOne({
                 messages: mes.message,
                 name: mes.username,
-                chatRoom: mes.chatRoom, //use that local chatID variable here
+                // chatRoom: mes.chatRoom, //use that local chatID variable here
                 timestamp: mes.timestamp
             })
         })

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { StringDecoder } from "string_decoder";
 import { ChatRoom } from "../../utils/rooms/chat-room";
 
 const express = require("express");
@@ -12,29 +13,37 @@ const MongoPaging = require("mongo-cursor-pagination")
 
 const { jwtCheck } = require('../../middleware/auth')
 
-router.get("/getUserChats", async (req: Request, res: Response) => {
+router.post("/getUserChats", async (req: Request, res: Response) => {
     const { username } = req.body
     try {
         let user = await userModel.findOne({ username: username })
+        console.log(user)
         if (!user) {
             return res.status(400).json({ message: "User not found!" })
         }
-        let chatIds: Array<Number> = user.chatRooms
+        let chatIds: Array<string> = user.chatRooms
         let chats: Array<any> = []
-        chatIds.forEach(async (id: Number) => {
-            let chat = chatRoomModel.findOne({ chatId: id })
-            if (chat) {
-                chats.push({ chatId: id, type: chat.type, chatName: chat.chatName })
-            }
+        let promises: Array<Promise<any>> = []
+        chatIds.forEach(async (id: string) => {
+            console.log(id)
+            const promise = new Promise(async (resolve, reject) => {
+                const chat = (await chatRoomModel.findOne({ _id: new mongoose.Types.ObjectId(id) }))
+                if (chat) {
+                    resolve(chatRoomModel.findOne({ _id: new mongoose.Types.ObjectId(id) }))
+                } else {
+                    reject('User Not found')
+                }
+            })
+            promises.push(promise)
         })
-        return res.status(200).json(chats)
+        return res.status(200).json(await Promise.all(promises))
     }
     catch (err) {
         return res.status(401).json({ message: err.message })
     }
 })
 
-router.post("/new", jwtCheck, async (req: Request, res: Response) => {
+router.post("/new", async (req: Request, res: Response) => {
 
     const { participants, chatName } = req.body;
 
@@ -57,26 +66,26 @@ router.post("/new", jwtCheck, async (req: Request, res: Response) => {
     console.log("Chat Room ID: ", chatRoomId);
 
     try {
+        
+        // push metadata into chat room collection. chat id, chat type, chat name
 
+        const chatRoomMetadata = new chatRoomModel({
+            chatId: chatRoomId,
+            type: chatType,
+            chatName: chatName
+        })
+
+        const {_id} = await chatRoomMetadata.save()
+        
         await userModel.updateMany({
             username: {
                 $in: participants
             }
         }, {
             $push: {
-                chatRooms: chatRoomId
+                chatRooms: _id
             }
         })
-
-        // push metadata into chat room collection. chat id, chat type, chat name
-
-        const chatRoomMetadata = new chatRoomModel({
-            chatId: chatRoomId,
-            type: chatType,
-            ChatName: chatName
-        })
-
-        await chatRoomMetadata.save()
 
         return res.status(200).json({
             message: "Chat Room created successfully, and metadata saved.",
