@@ -14,8 +14,8 @@ class State extends Schema {
 class JitsiRoom extends BaseRoom {
     onCreate(options: any) {
         super.onCreate(options)
-        console.log("MapRoom created!", options);
-        this.setState(new State(this.roomId));
+        console.log("JitsiRoom created!", options);
+        this.setState(new State(options.meetingid));
         
     }
 
