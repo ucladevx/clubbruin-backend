@@ -8,10 +8,10 @@ interface ChatDoc extends Document {
 const chatSchema: Schema = new Schema(
     {
 
-        messages: {
+        message: {
             type: String
         },
-        name: {
+        username: {
             type: String
         },
         chatRoom: {

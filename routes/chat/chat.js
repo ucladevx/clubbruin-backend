@@ -41,13 +41,6 @@ router.post("/getUserChats", (req, res) => __awaiter(void 0, void 0, void 0, fun
                 }
             }));
             promises.push(promise);
-            // // let chat = await chatRoomModel.findOne({ _id: new mongoose.Types.ObjectId(id) })
-            // // console.log(chat, typeof chat, chat?.type, chat?.chatName)
-            // // const chat = promise.then(ch => ch)
-            // if (chat) {
-            //     console.log("if chat")
-            //     chats.push({ chatId: id, type: 'chat.type', chatName: 'chat.chatName' })
-            // }
         }));
         return res.status(200).json(yield Promise.all(promises));
     }
@@ -68,12 +61,12 @@ router.post("/new", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     console.log(chatType);
     // create and insert chatRoomId into each participant's chatRooms[]
-    const chatRoomId = Math.ceil(Math.random() * 1000000000000);
-    console.log("Chat Room ID: ", chatRoomId);
+    // const chatRoomId = Math.ceil(Math.random() * 1000000000000);
+    // console.log("Chat Room ID: ", chatRoomId);
     try {
         // push metadata into chat room collection. chat id, chat type, chat name
         const chatRoomMetadata = new chatRoomModel({
-            chatId: chatRoomId,
+            // chatId: chatRoomId,
             type: chatType,
             chatName: chatName
         });
@@ -89,7 +82,7 @@ router.post("/new", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return res.status(200).json({
             message: "Chat Room created successfully, and metadata saved.",
-            chatId: chatRoomId,
+            // chatId: chatRoomId,
             chatType,
             chatName
         });

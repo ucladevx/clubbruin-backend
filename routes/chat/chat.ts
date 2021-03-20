@@ -62,21 +62,21 @@ router.post("/new", async (req: Request, res: Response) => {
 
     // create and insert chatRoomId into each participant's chatRooms[]
 
-    const chatRoomId = Math.ceil(Math.random() * 1000000000000);
-    console.log("Chat Room ID: ", chatRoomId);
+    // const chatRoomId = Math.ceil(Math.random() * 1000000000000);
+    // console.log("Chat Room ID: ", chatRoomId);
 
     try {
-        
+
         // push metadata into chat room collection. chat id, chat type, chat name
 
         const chatRoomMetadata = new chatRoomModel({
-            chatId: chatRoomId,
+            // chatId: chatRoomId,
             type: chatType,
             chatName: chatName
         })
 
-        const {_id} = await chatRoomMetadata.save()
-        
+        const { _id } = await chatRoomMetadata.save()
+
         await userModel.updateMany({
             username: {
                 $in: participants
@@ -89,7 +89,7 @@ router.post("/new", async (req: Request, res: Response) => {
 
         return res.status(200).json({
             message: "Chat Room created successfully, and metadata saved.",
-            chatId: chatRoomId,
+            // chatId: chatRoomId,
             chatType,
             chatName
         })

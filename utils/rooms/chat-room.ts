@@ -13,14 +13,26 @@ class MyMessage extends Schema {
 class ChatRoom extends BaseRoom {
 
     userList: string[] = [];
+    // messageHist: any[] = [new Message("lasanya", "nessae 1", Date.now()), new Message("ish", "askfh 2", Date.now())];
     messageHist: any[] = [];
     disableChat: boolean = true;
+    chatsLoaded: boolean = false;
+    chatRoomId: string = ""
+
+    async loadChats(chatRoomId: String) {
+        if (!this.chatsLoaded) {
+            this.messageHist = await chatModel.find({ chatRoom: chatRoomId })
+            console.log(this.messageHist)
+        }
+    }
 
     // beforeOnCreate() store chatId to some local variable
     async beforeOnCreate(options: any) {
         let chatId = options.chatId;
-        this.messageHist = await chatModel.findById({ chatId })
+        // this.messageHist = await chatModel.find({ chatRoom: chatId })
 
+        await this.loadChats(chatId)
+        this.chatRoomId = chatId;
         // listen for load more i.e. onMessage("load-more") https://docs.colyseus.io/server/room/
     }
 
@@ -32,8 +44,11 @@ class ChatRoom extends BaseRoom {
         console.log(options.username + ' joined chat room!');
 
         let data = new MyMessage();
+
+        await this.loadChats(options.chatId);
+
         data.messageHist = this.messageHist;
-        client.send("chat-hist", data);
+        client.send("chat-hist", data.messageHist);
 
         // paginate here? mongo-cursor-pagination.
         // send next page over
@@ -48,13 +63,15 @@ class ChatRoom extends BaseRoom {
 
     onDispose() {
         console.log("ChatRoom Disposed");
-        this.messageHist.forEach(mes => {
-            chatModel.insertOne({
-                messages: mes.message,
-                name: mes.username,
-                // chatRoom: mes.chatRoom, //use that local chatID variable here
+        this.messageHist.filter((mes) => mes.newMsg).forEach(async mes => {
+            console.log(mes)
+            const chat = new chatModel({
+                message: mes.message,
+                username: mes.username,
+                chatRoom: this.chatRoomId, //use that local chatID variable here
                 timestamp: mes.timestamp
             })
+            await chat.save()
         })
     }
 }

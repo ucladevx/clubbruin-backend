@@ -8,9 +8,6 @@ interface ChatRoomDoc extends Document {
 
 const ChatRoomSchema: Schema = new Schema(
     {
-        chatId: {
-            type: Number
-        },
         type: {
             type: String
         },

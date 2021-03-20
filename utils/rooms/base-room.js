@@ -36,7 +36,7 @@ class BasePlayer extends schema_1.Schema {
     //pull all required values from database
     importDBValues(username) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield userModel.findOne({ username: username });
+            const user = yield userModel.findOne({ username });
             if (!user) {
                 console.log("user does not exist!");
                 return;
@@ -74,7 +74,9 @@ class BaseRoom extends colyseus_1.Room {
         this.onMessage("chat-send", (client, data) => {
             console.log("Client (", client.sessionId, ") sent message: ", data);
             var message = new index_1.Message(options.username, data, Date.now());
-            this.messageHist.push(message);
+            console.log(message);
+            console.log(1);
+            this.messageHist.push(Object.assign(Object.assign({}, message), { newMsg: true }));
             this.broadcast("chat-recv", message, { except: client });
         });
         this.onMessage("chat-recv", (client, data) => {
@@ -103,7 +105,7 @@ class BaseRoom extends colyseus_1.Room {
     onJoin(client, options) {
         console.log(options.username + ' joined room!');
     }
-    onLeave(client) {
+    onLeave(client, options) {
         console.log('left room!');
     }
     onDispose() {

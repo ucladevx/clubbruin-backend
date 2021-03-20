@@ -22,7 +22,7 @@ class BasePlayer extends Schema {
 
     //pull all required values from database
     async importDBValues(username: string) {
-        const user = await userModel.findOne({ username: username })
+        const user = await userModel.findOne({ username })
         if (!user) {
             console.log("user does not exist!")
             return
@@ -56,7 +56,9 @@ class BaseRoom extends Room {
         this.onMessage("chat-send", (client: Client, data: any) => {
             console.log("Client (", client.sessionId, ") sent message: ", data);
             var message = new Message(options.username, data, Date.now())
-            this.messageHist.push(message)
+            console.log(message)
+            console.log(1)
+            this.messageHist.push({ ...message, newMsg: true })
             this.broadcast("chat-recv", message, { except: client });
         });
         this.onMessage("chat-recv", (client: Client, data: any) => {
@@ -88,7 +90,7 @@ class BaseRoom extends Room {
         console.log(options.username + ' joined room!');
     }
 
-    onLeave(client: Client) {
+    onLeave(client: Client, options: any) {
         console.log('left room!');
     }
 
