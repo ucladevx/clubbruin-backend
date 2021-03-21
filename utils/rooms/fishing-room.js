@@ -5,6 +5,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FishingRoom = exports.FishingState = exports.Player = exports.Rod = void 0;
 const schema_1 = require("@colyseus/schema");
@@ -21,10 +30,11 @@ function generateStartingPosition() {
     return startingPoint * (-15);
 }
 class Fish extends schema_1.Schema {
-    constructor() {
+    constructor(data) {
         super();
         this.x = Math.floor(Math.random() * 400);
         this.y = generateStartingPosition();
+        this.speed = data;
     }
 }
 __decorate([
@@ -33,6 +43,9 @@ __decorate([
 __decorate([
     schema_1.type("number")
 ], Fish.prototype, "y", void 0);
+__decorate([
+    schema_1.type("number")
+], Fish.prototype, "speed", void 0);
 class Rod extends schema_1.Schema {
     constructor() {
         super(...arguments);
@@ -66,6 +79,19 @@ class FishingState extends schema_1.Schema {
         super(...arguments);
         this.fishes = new schema_1.MapSchema();
         this.players = new schema_1.MapSchema();
+    }
+    // creates a fish with id as array num and speed as parameter
+    createFish(data) {
+        this.fishes.set(data.id, new Fish(data.speed));
+    }
+    //update location of fish 
+    moveFish() {
+        this.fishes.forEach((key, value) => {
+            console.log(value);
+            console.log(key);
+        });
+        //this.fishes.get(id).x -= this.fishes.get(id).speed; 
+        //console.log("fish moved with id:" + id )
     }
     createPlayer(sessionId, username) {
         this.players.set(sessionId, new Player(username));
@@ -102,16 +128,32 @@ __decorate([
 exports.FishingState = FishingState;
 class FishingRoom extends base_room_1.BaseRoom {
     // initializes game state and has event listeners
-    onCreate(options) {
-        this.setState(new FishingState());
-        console.log("fishing room created!!!");
-        this.onMessage("moveRod", (client, data) => {
-            this.state.moveRod(client.sessionId, data);
-        });
-        this.onMessage("removeFish", (client, data) => {
-            this.state.removeFish(client.sessionId, data);
+    // create fish array 
+    // use beforeoncreate
+    // frontend loads state from fish initial
+    beforeOnCreate(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.setState(new FishingState());
+            console.log("fishing room created!!!");
+            this.onMessage("createFish", (client, data) => {
+                this.state.createFish(data);
+                console.log("fish created " + data.id);
+            });
+            this.onMessage("moveFish", (client, data) => {
+                this.state.moveFish();
+            });
+            this.onMessage("moveRod", (client, data) => {
+                this.state.moveRod(client.sessionId, data);
+            });
+            this.onMessage("removeFish", (client, data) => {
+                this.state.removeFish(client.sessionId, data);
+            });
         });
     }
+    constructor() {
+        super();
+    }
+    // not needed
     onAuth(client, options) {
         return true;
     }

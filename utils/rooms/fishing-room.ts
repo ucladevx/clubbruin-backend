@@ -14,13 +14,17 @@ function generateStartingPosition() {
     return startingPoint * (-15)
   }
 
+
 class Fish extends Schema {
     @type("number")
     x: number = Math.floor(Math.random() * 400);
     @type("number")
     y: number = generateStartingPosition();
-    constructor(){
+    @type("number")
+    speed: number; 
+    constructor(data: number){
         super()
+        this.speed = data;
     }
 }
 
@@ -50,10 +54,21 @@ class FishingState extends Schema {
     @type({ map: Player })
     players = new MapSchema<Player>();
 
-    createFish(id: string, data: any ) {
-        this.fishes.set(id,new Fish(data));
+    // creates a fish with id as array num and speed as parameter
+    createFish(data: any ) {
+        this.fishes.set(data.id,new Fish(data.speed));
     }
 
+    //update location of fish 
+    moveFish(){
+        this.fishes.forEach((key,value) => {
+            console.log(value)
+            console.log(key)
+        });
+
+        //this.fishes.get(id).x -= this.fishes.get(id).speed; 
+        //console.log("fish moved with id:" + id )
+    }
     createPlayer(sessionId: string,username :string) {
         this.players.set(sessionId, new Player(username));
     }
@@ -87,16 +102,25 @@ class FishingState extends Schema {
 
     }
 
-
 }
 
 
 
 class FishingRoom extends BaseRoom {
     // initializes game state and has event listeners
-    onCreate(options : any) {
+    // create fish array 
+    // use beforeoncreate
+    // frontend loads state from fish initial
+    async beforeOnCreate(options: any){
         this.setState(new FishingState())
         console.log("fishing room created!!!")
+        this.onMessage("createFish", (client: Client, data: any) => {
+            this.state.createFish(data);
+            console.log("fish created " + data.id)
+        })
+        this.onMessage("moveFish", (client: Client, data: any) => {
+            this.state.moveFish();
+        });
         this.onMessage("moveRod", (client: Client, data: any) => {
             this.state.moveRod(client.sessionId, data);
         });
@@ -105,7 +129,11 @@ class FishingRoom extends BaseRoom {
             this.state.removeFish(client.sessionId, data);
         });
     }
+    constructor(){
+        super();
+    }
     
+    // not needed
     onAuth(client: Client, options:any){
         return true;
     }
