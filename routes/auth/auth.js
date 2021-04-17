@@ -16,8 +16,19 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../../models/user');
 const mongoose = require('mongoose');
 const signingSecret = process.env.JWT_SECRET || 'supersecretstringthatwillbestoredindotenvlater';
+const isUndefined = (payload) => {
+    if (payload === null || payload === undefined || payload === "") {
+        return true;
+    }
+    return false;
+};
 router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
+    if (isUndefined(username) || isUndefined(password)) {
+        return res.status(400).json({
+            message: "Username or password not provided."
+        });
+    }
     let token;
     try {
         const user = yield userModel.findOne({ username: username });
@@ -51,9 +62,14 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, email, password } = req.body;
+    if (isUndefined(username) || isUndefined(password)) {
+        return res.status(400).json({
+            message: "Username or password not provided."
+        });
+    }
     // use client side validation and send non-empty username/email/password to backend
     if (password.length < 8) {
-        return res.json({
+        return res.status(400).json({
             message: 'Invalid password. Must have at least 8 characters.'
         });
     }
@@ -62,7 +78,7 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
         hash = yield bcrypt.hash(password, 10);
     }
     catch (err) {
-        return res.json({
+        return res.status(500).json({
             message: err.message
         });
     }
@@ -71,27 +87,27 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
         username,
         email,
         password: hash,
-        stupid: "hello"
+        stupid: "hello" // ?
     });
     try {
         yield user.save();
     }
     catch (err) {
         if (err.message.includes('duplicate') && err.message.includes('username')) {
-            return res.json({
+            return res.status(406).json({
                 message: 'Username taken. Create a different username.'
             });
         }
         else if (err.message.includes('duplicate') && err.message.includes('email')) {
-            return res.json({
+            return res.status(406).json({
                 message: 'Email already in use. Use a different one.'
             });
         }
-        return res.json({
+        return res.status(500).json({
             message: err.message
         });
     }
-    res.status(200).json({
+    res.status(201).json({
         message: 'Signup successful',
         username,
         email,

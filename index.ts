@@ -15,7 +15,6 @@ import { JitsiRoom } from './utils/rooms/jitsi-room';
 
 import { router as ColyseusRoutes } from './routes/colyseus/index';
 
-
 const port = Number(process.env.PORT || 9000) + Number(process.env.NODE_APP_INSTANCE || 0);
 const app = express();
 app.use(cors())
@@ -138,3 +137,5 @@ http.listen(SOCKET_PORT, () => {
 })
 
 connectToDB()
+
+module.exports = app

@@ -113,3 +113,4 @@ http.listen(SOCKET_PORT, () => {
     console.log("connected to port: " + SOCKET_PORT);
 });
 connectToDB();
+module.exports = app;

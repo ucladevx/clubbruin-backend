@@ -11,15 +11,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const jwt = require('jsonwebtoken');
 const userModel = require('../../models/user');
 const chatRoomModel = require('../../models/chatRoom');
 const mongoose = require('mongoose');
 const MongoPaging = require("mongo-cursor-pagination");
 const { jwtCheck } = require('../../middleware/auth');
+// ? are req objects parsed as strings? what would the type of this be?
+// TODO: replace 'any' with the type
+const isUndefined = (payload) => {
+    if (payload === null || payload === undefined || payload === "") {
+        return true;
+    }
+    return false;
+};
 router.post("/getUserChats", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = req.body;
+    if (isUndefined(username)) {
+        return res.status(400).json({
+            message: "Username not provided."
+        });
+    }
     try {
         let user = yield userModel.findOne({ username: username });
         console.log(user);
@@ -50,7 +61,7 @@ router.post("/getUserChats", (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 router.post("/new", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { participants, chatName } = req.body;
-    if (participants == null || participants == undefined) {
+    if (isUndefined(participants)) {
         return res.status(400).json({
             message: "Need at least one participant."
         });
@@ -59,10 +70,6 @@ router.post("/new", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     if (chatName != null && chatName != undefined) {
         chatType = "group";
     }
-    console.log(chatType);
-    // create and insert chatRoomId into each participant's chatRooms[]
-    // const chatRoomId = Math.ceil(Math.random() * 1000000000000);
-    // console.log("Chat Room ID: ", chatRoomId);
     try {
         // push metadata into chat room collection. chat id, chat type, chat name
         const chatRoomMetadata = new chatRoomModel({
@@ -96,6 +103,11 @@ router.post("/new", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 }));
 router.get('/searchUser', jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { pattern, limit, nextPage, previousPage } = req.query;
+    if (isUndefined(pattern)) {
+        return res.status(400).json({
+            message: "Search string not provided."
+        });
+    }
     pattern = String(pattern);
     limit = String(limit);
     let listOfNames = [];

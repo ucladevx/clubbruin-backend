@@ -1,11 +1,7 @@
 import { Request, Response } from "express";
-import { StringDecoder } from "string_decoder";
-import { ChatRoom } from "../../utils/rooms/chat-room";
 
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs")
-const jwt = require('jsonwebtoken');
 const userModel = require('../../models/user')
 const chatRoomModel = require('../../models/chatRoom')
 const mongoose = require('mongoose')
@@ -13,8 +9,24 @@ const MongoPaging = require("mongo-cursor-pagination")
 
 const { jwtCheck } = require('../../middleware/auth')
 
+// ? are req objects parsed as strings? what would the type of this be?
+// TODO: replace 'any' with the type
+const isUndefined = (payload: any) => {
+    if (payload === null || payload === undefined || payload === "") {
+        return true
+    }
+    return false
+}
+
 router.post("/getUserChats", async (req: Request, res: Response) => {
     const { username } = req.body
+
+    if (isUndefined(username)) {
+        return res.status(400).json({
+            message: "Username not provided."
+        })
+    }
+
     try {
         let user = await userModel.findOne({ username: username })
         console.log(user)
@@ -47,7 +59,7 @@ router.post("/new", async (req: Request, res: Response) => {
 
     const { participants, chatName } = req.body;
 
-    if (participants == null || participants == undefined) {
+    if (isUndefined(participants)) {
         return res.status(400).json({
             message: "Need at least one participant."
         })
@@ -57,13 +69,6 @@ router.post("/new", async (req: Request, res: Response) => {
     if (chatName != null && chatName != undefined) {
         chatType = "group"
     }
-
-    console.log(chatType)
-
-    // create and insert chatRoomId into each participant's chatRooms[]
-
-    // const chatRoomId = Math.ceil(Math.random() * 1000000000000);
-    // console.log("Chat Room ID: ", chatRoomId);
 
     try {
 
@@ -106,6 +111,12 @@ router.post("/new", async (req: Request, res: Response) => {
 router.get('/searchUser', jwtCheck, async (req: Request, res: Response) => {
 
     let { pattern, limit, nextPage, previousPage } = req.query
+
+    if (isUndefined(pattern)) {
+        return res.status(400).json({
+            message: "Search string not provided."
+        })
+    }
 
     pattern = String(pattern)
     limit = String(limit)
